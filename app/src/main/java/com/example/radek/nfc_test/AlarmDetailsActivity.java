@@ -1,0 +1,58 @@
+package com.example.radek.nfc_test;
+
+import android.annotation.TargetApi;
+import android.content.Intent;
+import android.os.Build;
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.TimePicker;
+import android.widget.Toast;
+
+import java.util.Calendar;
+
+public class AlarmDetailsActivity extends AppCompatActivity
+{
+    private TimePicker timePicker;
+    private Alarm alarm;
+    private int alarmPosition;
+
+    @TargetApi(Build.VERSION_CODES.M)
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_alarm_details);
+        timePicker = (TimePicker) findViewById(R.id.timePicker);
+        timePicker.setIs24HourView(true);
+
+        Intent intent = getIntent();
+        alarm = (Alarm) intent.getSerializableExtra("ALARM");
+        alarmPosition = intent.getIntExtra("ALARM_POSITION",0);
+        Toast.makeText(getApplicationContext(),"Editing alarm " + alarmPosition,Toast.LENGTH_SHORT).show();
+
+            timePicker.setCurrentHour(alarm.getAlarmTime().get(Calendar.HOUR_OF_DAY));
+            timePicker.setCurrentMinute(alarm.getAlarmTime().get(Calendar.MINUTE));
+
+        timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
+            @Override
+            public void onTimeChanged(TimePicker view, int hourOfDay, int minute) {
+                Calendar newAlarmTime = Calendar.getInstance();
+                newAlarmTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
+                newAlarmTime.set(Calendar.MINUTE, minute);
+                newAlarmTime.set(Calendar.SECOND, 0);
+                alarm.setAlarmTime(newAlarmTime);
+            }
+        });
+    }
+
+    public void close(View view)
+    {
+        int resultCode = 666;
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("ALARM", alarm);
+        resultIntent.putExtra("ALARM_POSITION", alarmPosition);
+        setResult(resultCode, resultIntent);
+        finish();
+    }
+}
