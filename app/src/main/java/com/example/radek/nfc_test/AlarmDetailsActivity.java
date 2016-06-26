@@ -29,7 +29,6 @@ public class AlarmDetailsActivity extends AppCompatActivity
         Intent intent = getIntent();
         alarm = (Alarm) intent.getSerializableExtra("ALARM");
         alarmPosition = intent.getIntExtra("ALARM_POSITION",0);
-        Toast.makeText(getApplicationContext(),"Editing alarm " + alarmPosition,Toast.LENGTH_SHORT).show();
 
             timePicker.setCurrentHour(alarm.getAlarmTime().get(Calendar.HOUR_OF_DAY));
             timePicker.setCurrentMinute(alarm.getAlarmTime().get(Calendar.MINUTE));

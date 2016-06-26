@@ -103,7 +103,6 @@ public class MainActivity extends AppCompatActivity
                                 alarmsList.remove(position2);
                                 alarmsAdapter.setAlarms(alarmsList);
                                 alarmsAdapter.notifyDataSetChanged();
-                                //overwriteSaveFile();
                                 dialog.dismiss();
                             }
                         })

@@ -97,7 +97,6 @@ public class AlarmsListAdapter extends ArrayAdapter<Alarm>
         checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View arg0) {
-                Toast.makeText(getContext(),"Checkbox " + position + "clicked",Toast.LENGTH_SHORT).show();
                 main.updateAlarm(position);
             }
         });
