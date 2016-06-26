@@ -82,15 +82,36 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        alarmsListView = (ListView) findViewById(R.id.listView);
+        if (nfcAdapter == null) {
+            Toast.makeText(this, "This device doesn`t support NFC", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+        else{
+            if (!nfcAdapter.isEnabled()) {
+                Snackbar snackbar = Snackbar
+                        .make(coordinatorLayout, "NFC service is disabled", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("SETTINGS", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startActivityForResult(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS), 0);
+                            }
+                        });
+                snackbar.setActionTextColor(Color.YELLOW);
+                snackbar.show();
+
+            } else {
+                Snackbar snackbar = Snackbar
+                        .make(coordinatorLayout, "NFC service is available!", Snackbar.LENGTH_SHORT);
+                snackbar.show();
+            }
+        }
 
         alarmsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
                 final int position2 = position;
-
                 boolean result = false;
+
                 AlertDialog myQuittingDialogBox = new AlertDialog.Builder(MainActivity.this)
                         //set message, title, and icon
                         .setTitle("Delete alarm clock")
@@ -121,36 +142,35 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onResume() {
-        //Toast.makeText(this, "ON RESUME", Toast.LENGTH_SHORT).show();
+    protected void onResume(){
         super.onResume();
-
         spManager.saveAlarmsList(alarmsList);
     }
 
     @Override
     protected void onPause() {
-        //Toast.makeText(this, "ON PAUSE", Toast.LENGTH_SHORT).show();
         super.onPause();
         spManager.saveAlarmsList(alarmsList);
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
-        Toast.makeText(this, "TAG detected", Toast.LENGTH_LONG).show();
+        Snackbar alarmPutOffSnackbar = Snackbar.make(coordinatorLayout,"Proper NFC tag discovered, have a good day!",Snackbar.LENGTH_SHORT);
+        alarmPutOffSnackbar.show();
         super.onNewIntent(intent);
         finish();
     }
 
     protected void onActivityResult (int requestCode, int resultCode, Intent data) {
         if(requestCode == 666) {
-            if(resultCode == 666)
-            {
+            if(resultCode == 666) {
                 Alarm alarm = (Alarm) data.getExtras().getSerializable("ALARM");
-                alarmsList.set(data.getIntExtra("ALARM_POSITION", 0), alarm);
-
+                int updatedAlarmPosition = data.getIntExtra("ALARM_POSITION", 0);
+                alarmsList.set(updatedAlarmPosition, alarm);
                 alarmsAdapter.setAlarms(alarmsList);
                 alarmsAdapter.notifyDataSetChanged();
+
+                displayAlarmTimeSnackbar(updatedAlarmPosition);
             }
         }
     }
@@ -161,69 +181,34 @@ public class MainActivity extends AppCompatActivity
         alarmsList = spManager.loadAlarmsList();
     }
 
-    private void findReferences()
-    {
+    private void findReferences() {
+        alarmsListView = (ListView) findViewById(R.id.listView);
         spManager = new SharedPrefsManager(getApplicationContext());
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
-
         alarmsListView = (ListView) findViewById(R.id.listView);
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-
-        if (nfcAdapter == null) {
-            Toast.makeText(this, "This device doesn`t support NFC", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-
-        if (!nfcAdapter.isEnabled()) {
-            Snackbar snackbar = Snackbar
-                    .make(coordinatorLayout, "NFC service is disabled", Snackbar.LENGTH_INDEFINITE)
-                    .setAction("SETTINGS", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            startActivityForResult(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS), 0);
-                        }
-                    });
-            snackbar.setActionTextColor(Color.YELLOW);
-            snackbar.show();
-
-        } else {
-            Snackbar snackbar = Snackbar
-                    .make(coordinatorLayout, "NFC service is available!", Snackbar.LENGTH_SHORT);
-            snackbar.show();
-        }
     }
 
     protected void callNFCAlarmScheduleService() {
-        printActiveAlarms();
         Intent nfcAlarmServiceIntent = new Intent(this, AlarmServiceBroadcastReceiver.class);
         sendBroadcast(nfcAlarmServiceIntent, null);
     }
 
-    public void updateAlarm(int position)
-    {
-        //spManager.saveAlarmsList(alarmsList);
+    public void updateAlarm(int position){
+        refreshAlarmsList();
         alarmsAdapter.setAlarms(alarmsList);
 
         if(alarmsList.get(position).isAlarmActive()) {
             alarmsList.get(position).setAlarmActive(false);
         }else{
             alarmsList.get(position).setAlarmActive(true);
-            Toast.makeText(this, alarmsList.get(position).getTimeUntilNextAlarmMessage(), Toast.LENGTH_SHORT).show();
+            displayAlarmTimeSnackbar(position);
         }
-
-        refreshAlarmsList();
 
         callNFCAlarmScheduleService();
     }
 
-    public void printActiveAlarms()
-    {
-        Log.d("BLA","ACTIVE ALARMS ARE: ");
-        for(Alarm a : alarmsList)
-        {
-            if(a.isAlarmActive())
-                Log.d("BLA",a.getStringNotation() + " ");
-        }
+    public void displayAlarmTimeSnackbar(int alarmPosition){
+        Snackbar.make(coordinatorLayout,alarmsList.get(alarmPosition).getTimeUntilNextAlarmMessage(),Snackbar.LENGTH_LONG).show();
     }
 }

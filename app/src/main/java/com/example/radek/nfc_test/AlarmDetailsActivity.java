@@ -6,6 +6,7 @@ import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -16,6 +17,7 @@ public class AlarmDetailsActivity extends AppCompatActivity
     private TimePicker timePicker;
     private Alarm alarm;
     private int alarmPosition;
+    private Button confirmButton;
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
@@ -25,6 +27,7 @@ public class AlarmDetailsActivity extends AppCompatActivity
         setContentView(R.layout.activity_alarm_details);
         timePicker = (TimePicker) findViewById(R.id.timePicker);
         timePicker.setIs24HourView(true);
+        confirmButton = (Button) findViewById(R.id.button);
 
         Intent intent = getIntent();
         alarm = (Alarm) intent.getSerializableExtra("ALARM");
@@ -43,15 +46,18 @@ public class AlarmDetailsActivity extends AppCompatActivity
                 alarm.setAlarmTime(newAlarmTime);
             }
         });
-    }
 
-    public void close(View view)
-    {
-        int resultCode = 666;
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra("ALARM", alarm);
-        resultIntent.putExtra("ALARM_POSITION", alarmPosition);
-        setResult(resultCode, resultIntent);
-        finish();
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int resultCode = 666;
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("ALARM", alarm);
+                resultIntent.putExtra("ALARM_POSITION", alarmPosition);
+                setResult(resultCode, resultIntent);
+                Toast.makeText(getApplicationContext(), alarm.getTimeUntilNextAlarmMessage() + "debug", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
     }
 }
