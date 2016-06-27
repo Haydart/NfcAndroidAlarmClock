@@ -55,7 +55,6 @@ public class AlarmDetailsActivity extends AppCompatActivity
                 resultIntent.putExtra("ALARM", alarm);
                 resultIntent.putExtra("ALARM_POSITION", alarmPosition);
                 setResult(resultCode, resultIntent);
-                Toast.makeText(getApplicationContext(), alarm.getTimeUntilNextAlarmMessage() + "debug", Toast.LENGTH_SHORT).show();
                 finish();
             }
         });

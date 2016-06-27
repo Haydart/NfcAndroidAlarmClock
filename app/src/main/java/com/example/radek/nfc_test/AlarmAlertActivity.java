@@ -122,6 +122,7 @@ public class AlarmAlertActivity extends AppCompatActivity
         super.onNewIntent(intent);
         vibrator.cancel();
         mediaPlayer.stop();
+        mediaPlayer.release();
         finish();
     }
 
@@ -135,7 +136,7 @@ public class AlarmAlertActivity extends AppCompatActivity
                 vibrator.vibrate(pattern, 0);
             }
             try {
-                mediaPlayer.setVolume(1.0f, 1.0f);
+                mediaPlayer.setVolume(.1f, .1f);
                 mediaPlayer.setDataSource(this,
                         Uri.parse(alarm.getAlarmTonePath()));
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);

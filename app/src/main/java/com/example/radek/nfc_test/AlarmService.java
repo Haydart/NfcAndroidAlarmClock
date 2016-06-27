@@ -28,7 +28,7 @@ public class AlarmService extends Service {
 
     @Override
     public void onCreate() {
-        Log.d(this.getClass().getSimpleName(), "onCreate()");
+        Log.d(this.getClass().getSimpleName(), "AlarmService.class onCreate()");
         super.onCreate();
         spManager = new SharedPrefsManager(getApplicationContext());
     }

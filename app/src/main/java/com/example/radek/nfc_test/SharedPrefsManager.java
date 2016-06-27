@@ -25,7 +25,7 @@ public class SharedPrefsManager
 
     public synchronized void saveAlarmsList(ArrayList<Alarm> alarmsList)
     {
-        Log.d("SPM","alarmsSaved");
+//        Log.d("SPM","alarmsSaved");
         SharedPreferences.Editor editor = sharedPreferences.edit();
         try {
             editor.putString(Settings.getInstance().getAlarmsWritePoint(), ObjectSerializer.serialize(alarmsList));
@@ -37,7 +37,7 @@ public class SharedPrefsManager
 
     public synchronized ArrayList<Alarm> loadAlarmsList()
     {
-        Log.d("SPM","alarmsLoaded");
+//        Log.d("SPM","alarmsLoaded");
         ArrayList<Alarm> alarmsList = null;
         try {
             alarmsList = (ArrayList<Alarm>) ObjectSerializer.deserialize(sharedPreferences.getString(Settings.getInstance().getAlarmsWritePoint(), ObjectSerializer.serialize(new ArrayList<Alarm>())));

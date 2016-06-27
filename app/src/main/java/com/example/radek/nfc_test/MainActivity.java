@@ -145,6 +145,7 @@ public class MainActivity extends AppCompatActivity
     protected void onResume(){
         super.onResume();
         spManager.saveAlarmsList(alarmsList);
+        printActiveAlarmsList();
     }
 
     @Override
@@ -195,9 +196,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void updateAlarm(int position){
-        refreshAlarmsList();
-        alarmsAdapter.setAlarms(alarmsList);
-
         if(alarmsList.get(position).isAlarmActive()) {
             alarmsList.get(position).setAlarmActive(false);
         }else{
@@ -205,10 +203,22 @@ public class MainActivity extends AppCompatActivity
             displayAlarmTimeSnackbar(position);
         }
 
+        refreshAlarmsList();
+        alarmsAdapter.setAlarms(alarmsList);
         callNFCAlarmScheduleService();
     }
 
     public void displayAlarmTimeSnackbar(int alarmPosition){
         Snackbar.make(coordinatorLayout,alarmsList.get(alarmPosition).getTimeUntilNextAlarmMessage(),Snackbar.LENGTH_LONG).show();
     }
+
+    public void printActiveAlarmsList(){
+        for(int i=0;i<alarmsList.size();i++){
+            if(alarmsList.get(i).isAlarmActive()){
+                //Log.d("ACTIVE ALARM PRINTOUT",alarmsList.get(i).getTimeUntilNextAlarmMessage() + " on " + alarmsList.get(i).getStringNotation() );
+                Log.d("ALARM ACTIVE?", "ALARM " + i + " is " +alarmsList.get(i).isAlarmActive());
+            }
+        }
+    }
+
 }
