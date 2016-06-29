@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.widget.Toast;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -20,13 +23,21 @@ import java.util.StringTokenizer;
  */
 public class Alarm implements Serializable
 {
+    @Expose
     private String stringNotation;
+    @Expose
     private Boolean alarmActive = true;
+    @Expose
     private Calendar alarmTime = Calendar.getInstance();
+    @Expose
     private Day[] days = {Day.MONDAY,Day.TUESDAY,Day.WEDNESDAY,Day.THURSDAY,Day.FRIDAY,Day.SATURDAY,Day.SUNDAY,};
+    @Expose
     private String alarmTonePath = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString();
+    @Expose
     private Boolean vibrate = true;
+    @Expose
     private String alarmName = "Alarm Clock";
+    @Expose
     private int ID;
 
     public enum Day {

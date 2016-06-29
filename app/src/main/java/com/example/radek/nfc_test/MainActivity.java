@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity
 
         findReferences();
         alarmsList = spManager.loadAlarmsList();
+        //Log.d("sdsvd",alarmsList.toString());
 
         callNFCAlarmScheduleService();
 

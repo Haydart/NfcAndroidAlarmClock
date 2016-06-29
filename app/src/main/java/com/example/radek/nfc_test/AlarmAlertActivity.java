@@ -136,7 +136,7 @@ public class AlarmAlertActivity extends AppCompatActivity
                 vibrator.vibrate(pattern, 0);
             }
             try {
-                mediaPlayer.setVolume(.1f, .1f);
+                mediaPlayer.setVolume(.05f, .05f);
                 mediaPlayer.setDataSource(this,
                         Uri.parse(alarm.getAlarmTonePath()));
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);

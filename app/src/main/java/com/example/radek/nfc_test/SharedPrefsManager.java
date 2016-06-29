@@ -7,6 +7,12 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.util.List;
+import java.util.ArrayList;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -25,11 +31,12 @@ public class SharedPrefsManager
 
     public synchronized void saveAlarmsList(ArrayList<Alarm> alarmsList)
     {
-//        Log.d("SPM","alarmsSaved");
+        String alarmsListJSON = new Gson().toJson(alarmsList);
+
         SharedPreferences.Editor editor = sharedPreferences.edit();
         try {
-            editor.putString(Settings.getInstance().getAlarmsWritePoint(), ObjectSerializer.serialize(alarmsList));
-        } catch (IOException e) {
+            editor.putString(Settings.getInstance().getAlarmsWritePoint(), alarmsListJSON);
+        } catch (Exception e) {
             e.printStackTrace();
         }
         editor.commit();
@@ -37,11 +44,11 @@ public class SharedPrefsManager
 
     public synchronized ArrayList<Alarm> loadAlarmsList()
     {
-//        Log.d("SPM","alarmsLoaded");
-        ArrayList<Alarm> alarmsList = null;
+        ArrayList<Alarm> alarmsList = new ArrayList<>();
         try {
-            alarmsList = (ArrayList<Alarm>) ObjectSerializer.deserialize(sharedPreferences.getString(Settings.getInstance().getAlarmsWritePoint(), ObjectSerializer.serialize(new ArrayList<Alarm>())));
-        } catch (IOException e) {
+            alarmsList = new Gson().fromJson(sharedPreferences.getString(Settings.getInstance().getAlarmsWritePoint(),"[]"), new TypeToken<List<Alarm>>(){}.getType());
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return alarmsList;
