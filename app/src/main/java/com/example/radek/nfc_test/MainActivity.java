@@ -1,17 +1,10 @@
 package com.example.radek.nfc_test;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
-import android.app.SharedElementCallback;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.nfc.NfcAdapter;
-import android.provider.*;
-import android.provider.Settings;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -21,34 +14,30 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import com.example.radek.nfc_test.expandingcells.ExpandableListItem;
+import com.example.radek.nfc_test.expandingcells.ExpandingListView;
 
-public class MainActivity extends AppCompatActivity
-{
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
     public static final String TAG = "Alarm Clock";
     private static final String MIME_TEXT_PLAIN = "text/plain";
     private TextView textView;
     private NfcAdapter nfcAdapter;
     private FloatingActionButton fab;
-    private ListView alarmsListView;
-    private ArrayList<Alarm> alarmsList;
-    private AlarmsListAdapter alarmsAdapter;
+    private ExpandingListView alarmsAnimatedExpandableListView;
+    private List<ExpandableListItem> expandableListItemList;
+    private AlarmsAnimatedExpandableListAdapter alarmsAdapter;
     private SharedPrefsManager spManager;
     private CoordinatorLayout coordinatorLayout;
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu, menu);
 
@@ -59,26 +48,23 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Toast.makeText(this, "ON CREATE", Toast.LENGTH_SHORT).show();
 
         findReferences();
-        alarmsList = spManager.loadAlarmsList();
-        //Log.d("sdsvd",alarmsList.toString());
+        expandableListItemList = spManager.loadExpandableItemsList();
 
         callNFCAlarmScheduleService();
 
-        alarmsAdapter = new AlarmsListAdapter(this, alarmsList);
-        alarmsListView.setAdapter(alarmsAdapter);
+        alarmsAdapter = new AlarmsAnimatedExpandableListAdapter(this, expandableListItemList, alarmsAnimatedExpandableListView);
+        alarmsAnimatedExpandableListView.setAdapter(alarmsAdapter);
+        alarmsAnimatedExpandableListView.setDivider(null);
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 Intent intent = new Intent(getApplicationContext(), AlarmDetailsActivity.class);
-                alarmsList.add(new Alarm());
-                intent.putExtra("ALARM", alarmsList.get(alarmsList.size() - 1)); // pass newly created alement
-                intent.putExtra("ALARM_POSITION", alarmsList.size() - 1); // indicate that the newly zreated alarm is on last position
+                expandableListItemList.add(new ExpandableListItem(new Alarm(), Settings.COLLAPSED_HEIGHT));
+                intent.putExtra("ALARM", expandableListItemList.get(expandableListItemList.size() - 1).getAlarm()); // pass newly created element
+                intent.putExtra("ALARM_POSITION", expandableListItemList.size() - 1); // indicate that the newly created alarm is on last position
                 startActivityForResult(intent, 666);
             }
         });
@@ -86,8 +72,7 @@ public class MainActivity extends AppCompatActivity
         if (nfcAdapter == null) {
             Toast.makeText(this, "This device doesn`t support NFC", Toast.LENGTH_SHORT).show();
             finish();
-        }
-        else{
+        } else {
             if (!nfcAdapter.isEnabled()) {
                 Snackbar snackbar = Snackbar
                         .make(coordinatorLayout, "NFC service is disabled", Snackbar.LENGTH_INDEFINITE)
@@ -106,89 +91,62 @@ public class MainActivity extends AppCompatActivity
                 snackbar.show();
             }
         }
-
-        alarmsListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                final int position2 = position;
-                boolean result = false;
-
-                AlertDialog myQuittingDialogBox = new AlertDialog.Builder(MainActivity.this)
-                        //set message, title, and icon
-                        .setTitle("Delete alarm clock")
-                        .setMessage("Do you really want to delete specified record?")
-
-                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-
-                                callNFCAlarmScheduleService();
-                                alarmsList.remove(position2);
-                                alarmsAdapter.setAlarms(alarmsList);
-                                alarmsAdapter.notifyDataSetChanged();
-                                dialog.dismiss();
-                            }
-                        })
-
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .create();
-
-                myQuittingDialogBox.show();
-                return true;
-            }
-        });
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
-        spManager.saveAlarmsList(alarmsList);
+        expandableListItemList = spManager.loadExpandableItemsList();
         printActiveAlarmsList();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        spManager.saveAlarmsList(alarmsList);
+        spManager.saveAlarmsList(expandableListItemList);
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
-        Snackbar alarmPutOffSnackbar = Snackbar.make(coordinatorLayout,"Proper NFC tag discovered, have a good day!",Snackbar.LENGTH_SHORT);
+        Snackbar alarmPutOffSnackbar = Snackbar.make(coordinatorLayout, "Proper NFC tag discovered, have a good day!", Snackbar.LENGTH_SHORT);
         alarmPutOffSnackbar.show();
         super.onNewIntent(intent);
         finish();
     }
 
-    protected void onActivityResult (int requestCode, int resultCode, Intent data) {
-        if(requestCode == 666) {
-            if(resultCode == 666) {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 666) {
+            if (resultCode == 666) {
                 Alarm alarm = (Alarm) data.getExtras().getSerializable("ALARM");
                 int updatedAlarmPosition = data.getIntExtra("ALARM_POSITION", 0);
-                alarmsList.set(updatedAlarmPosition, alarm);
-                alarmsAdapter.setAlarms(alarmsList);
+
+                if(updatedAlarmPosition == expandableListItemList.size()) { //if that`s a new alarm
+                    expandableListItemList.add(new ExpandableListItem(alarm, Settings.COLLAPSED_HEIGHT));
+                }else{//the alarm was only edited
+                    expandableListItemList.get(updatedAlarmPosition).setAlarm(alarm);
+                }
+                alarmsAdapter.setAlarms(expandableListItemList);
                 alarmsAdapter.notifyDataSetChanged();
 
+                //newly created or edited alarm are set to active by default
                 displayAlarmTimeSnackbar(updatedAlarmPosition);
+                callNFCAlarmScheduleService();
             }
         }
     }
 
-    private void refreshAlarmsList()
-    {
-        spManager.saveAlarmsList(alarmsList);
-        alarmsList = spManager.loadAlarmsList();
+    private void refreshAlarmsList() {
+        spManager.saveAlarmsList(expandableListItemList);
+        expandableListItemList = spManager.loadExpandableItemsList();
     }
 
     private void findReferences() {
-        alarmsListView = (ListView) findViewById(R.id.listView);
+        alarmsAnimatedExpandableListView = (ExpandingListView) findViewById(R.id.alarmsExpandableListView);
         spManager = new SharedPrefsManager(getApplicationContext());
         coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
-        alarmsListView = (ListView) findViewById(R.id.listView);
+        alarmsAnimatedExpandableListView = (ExpandingListView) findViewById(R.id.alarmsExpandableListView);
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
     }
 
     protected void callNFCAlarmScheduleService() {
@@ -196,30 +154,38 @@ public class MainActivity extends AppCompatActivity
         sendBroadcast(nfcAlarmServiceIntent, null);
     }
 
-    public void updateAlarm(int position){
-        if(alarmsList.get(position).isAlarmActive()) {
-            alarmsList.get(position).setAlarmActive(false);
-        }else{
-            alarmsList.get(position).setAlarmActive(true);
+    public void updateAlarm(int position, boolean newState) {
+        expandableListItemList.get(position).getAlarm().setAlarmActive(newState);
+
+        if(newState){
             displayAlarmTimeSnackbar(position);
+            Log.d("aaaaaaaaaaaaa", "newState is " + newState);
         }
 
         refreshAlarmsList();
-        alarmsAdapter.setAlarms(alarmsList);
+        alarmsAdapter.setAlarms(expandableListItemList);
         callNFCAlarmScheduleService();
     }
 
-    public void displayAlarmTimeSnackbar(int alarmPosition){
-        Snackbar.make(coordinatorLayout,alarmsList.get(alarmPosition).getTimeUntilNextAlarmMessage(),Snackbar.LENGTH_LONG).show();
+    public void displayAlarmTimeSnackbar(int alarmPosition) {
+        Snackbar.make(coordinatorLayout, expandableListItemList.get(alarmPosition).getAlarm().getTimeUntilNextAlarmMessage(), Snackbar.LENGTH_LONG).show();
     }
 
-    public void printActiveAlarmsList(){
-        for(int i=0;i<alarmsList.size();i++){
-            if(alarmsList.get(i).isAlarmActive()){
+    public void printActiveAlarmsList() {
+        for (int i = 0; i < expandableListItemList.size(); i++) {
+            if (expandableListItemList.get(i).getAlarm().isAlarmActive()) {
                 //Log.d("ACTIVE ALARM PRINTOUT",alarmsList.get(i).getTimeUntilNextAlarmMessage() + " on " + alarmsList.get(i).getStringNotation() );
-                Log.d("ALARM ACTIVE?", "ALARM " + i + " is " +alarmsList.get(i).isAlarmActive());
+                Log.d("ALARM ACTIVE?", "ALARM " + i + " is " + expandableListItemList.get(i).getAlarm().isAlarmActive());
             }
         }
     }
 
+    public void OnAlarmDeleted(int position) {
+        expandableListItemList.remove(position);
+        alarmsAdapter.setAlarms(expandableListItemList);
+        alarmsAdapter.notifyDataSetChanged();
+
+        spManager.saveAlarmsList(expandableListItemList);
+        callNFCAlarmScheduleService();
+    }
 }

@@ -2,4 +2,6 @@
     <string name="app_name">NFC Alarm Clock</string>
     <string name="explanation">NFC processing is available on this device!</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="title_activity_ssdcsdc_ads">SsdcsdcAds</string>
+    <string name="alarm_day_today">Today</string>
 </resources>

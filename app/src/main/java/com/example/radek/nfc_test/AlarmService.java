@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.example.radek.nfc_test.expandingcells.ExpandableListItem;
+
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -48,11 +50,11 @@ public class AlarmService extends Service {
             }
         });
 
-        List<Alarm> alarms = spManager.loadAlarmsList();
+        List<ExpandableListItem> expandableListItems = spManager.loadExpandableItemsList();
 
-        for(Alarm alarm : alarms){
-            if(alarm.isAlarmActive())
-                alarmTreeSet.add(alarm);
+        for(ExpandableListItem item : expandableListItems){
+            if(item.getAlarm().isAlarmActive())
+                alarmTreeSet.add(item.getAlarm());
         }
         if(alarmTreeSet.iterator().hasNext()){
             return alarmTreeSet.iterator().next();
@@ -78,21 +80,22 @@ public class AlarmService extends Service {
      */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(this.getClass().getSimpleName(),"SERVICE onStartCommand()");
+        Log.d(this.getClass().getSimpleName(),"SERVICE STARTED");
         Alarm alarm = getNext();
         if(alarm != null){
             alarm.schedule(getApplicationContext());
             Log.d(this.getClass().getSimpleName(),alarm.getTimeUntilNextAlarmMessage() + " on hour " + alarm.getStringNotation());
 
         }else{
-            Intent myIntent = new Intent(getApplicationContext(), AlarmAlertBroadcastReceiver.class);
+            /*Intent myIntent = new Intent(getApplicationContext(), AlarmAlertBroadcastReceiver.class);
             myIntent.putExtra("alarm", new Alarm());
-            Log.d(this.getClass().getSimpleName(), "alarm was null");
+            Log.d(this.getClass().getSimpleName(), "alarm was nullLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
 
             PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, myIntent,PendingIntent.FLAG_CANCEL_CURRENT);
             AlarmManager alarmManager = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
 
-            alarmManager.cancel(pendingIntent);
+            alarmManager.cancel(pendingIntent);*/
+            Log.d("SERVICE NO ALARMS", "NO ALARMS SET");
         }
         return START_NOT_STICKY;
     }

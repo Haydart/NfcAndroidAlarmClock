@@ -5,6 +5,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.media.RingtoneManager;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.google.gson.annotations.Expose;
