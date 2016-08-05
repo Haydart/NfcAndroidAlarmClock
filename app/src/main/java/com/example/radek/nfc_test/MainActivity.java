@@ -134,6 +134,8 @@ public class MainActivity extends AppCompatActivity {
 
                 if(updatedAlarmPosition == -1) { //if that`s a new alarm
                     expandableListItemList.add(new ExpandableListItem(alarm, Settings.COLLAPSED_HEIGHT));
+                    updatedAlarmPosition = expandableListItemList.size()-1; // was throwing ArrayOutOfBounds in displayAlarmTimeSnackbar
+                    Log.d("asxasxasxasx","expandable size after add =" +expandableListItemList.size());
                 }else{//the alarm was only edited
                     expandableListItemList.get(updatedAlarmPosition).setAlarm(alarm);
                 }
@@ -141,6 +143,7 @@ public class MainActivity extends AppCompatActivity {
                 alarmsAdapter.notifyDataSetChanged();
 
                 //newly created or edited alarm are set to active by default
+                refreshAlarmsList();
                 displayAlarmTimeSnackbar(updatedAlarmPosition);
                 callNFCAlarmScheduleService();
             }
