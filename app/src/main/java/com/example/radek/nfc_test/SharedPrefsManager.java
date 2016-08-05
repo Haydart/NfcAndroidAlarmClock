@@ -31,9 +31,9 @@ public class SharedPrefsManager
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activityContext);
     }
 
-    public synchronized void saveAlarmsList(List<ExpandableListItem> alarmsList)
+    public synchronized void saveAlarmsList(List<ExpandableListItem> expandableListItems)
     {
-        String alarmsListJSON = new Gson().toJson(alarmsList);
+        String alarmsListJSON = new Gson().toJson(getAlarmList(expandableListItems));
 
         SharedPreferences.Editor editor = sharedPreferences.edit();
         try {

@@ -147,8 +147,6 @@ public class AlarmsAnimatedExpandableListAdapter extends ArrayAdapter<Expandable
         @Override
         public void onClick(View v) {
             ((MainActivity)context).launchAlarmDetailsActivity(MainActivity.LaunchType.CLICKED_ALARM, position);
-            Intent intent = new Intent(context.getApplicationContext(), AlarmDetailsActivity.class);
-
         }
         });
 

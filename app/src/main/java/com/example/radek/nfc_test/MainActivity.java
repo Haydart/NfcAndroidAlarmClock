@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
         findReferences();
         expandableListItemList = spManager.loadExpandableItemsList();
+        spManager.resetNfcTagAttached();
 
         callNFCAlarmScheduleService();
 
@@ -62,6 +63,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        checkForNfcService();
+    }
+
+    private void checkForNfcService() {
         if (nfcAdapter == null) {
             Toast.makeText(this, "This device doesn`t support NFC", Toast.LENGTH_SHORT).show();
             finish();
@@ -108,14 +113,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onStop() {
+        super.onStop();
         spManager.saveAlarmsList(expandableListItemList);
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
+        if(!spManager.wasNfcTagAttached()){
+            Toast.makeText(getApplicationContext(), "You won`t get away with that shit, I`m launching a service.", Toast.LENGTH_SHORT).show();
+        }
+        spManager = null;
+
     }
 
     @Override
@@ -170,6 +180,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateAlarm(int position, boolean newState) {
+        Log.d(this.getClass().getSimpleName(), "UPDATE ALARM HAPPENS ON APP START");
         expandableListItemList.get(position).getAlarm().setAlarmActive(newState);
 
         if(newState){
