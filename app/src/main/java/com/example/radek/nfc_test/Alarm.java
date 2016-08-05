@@ -127,10 +127,10 @@ public class Alarm implements Parcelable
 
     private void setStringNotation(int hour,int minutes) {
         StringBuilder stringBuilder = new StringBuilder();
-        if(hour / 9 == 0)
+        if(hour / 9 == 0 || hour == 9)
             stringBuilder.append("0");
         stringBuilder.append(hour).append(":");
-        if(minutes % 9 == 0)
+        if(minutes / 9 == 0 || minutes == 9)
             stringBuilder.append("0");
         stringBuilder.append(minutes);
         this.stringNotation = stringBuilder.toString();
