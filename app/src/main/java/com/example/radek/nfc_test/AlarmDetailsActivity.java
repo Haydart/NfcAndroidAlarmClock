@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TimePicker;
@@ -30,11 +31,14 @@ public class AlarmDetailsActivity extends AppCompatActivity
         confirmButton = (Button) findViewById(R.id.button);
 
         Intent intent = getIntent();
-        alarm = (Alarm) intent.getSerializableExtra("ALARM");
-        alarmPosition = intent.getIntExtra("ALARM_POSITION",0);
+        alarm = intent.getParcelableExtra("ALARM");
+        alarmPosition = intent.getIntExtra("ALARM_POSITION",-1);
+        if(alarm==null){
+            alarm = new Alarm();
+        }
 
-            timePicker.setCurrentHour(alarm.getAlarmTime().get(Calendar.HOUR_OF_DAY));
-            timePicker.setCurrentMinute(alarm.getAlarmTime().get(Calendar.MINUTE));
+        timePicker.setCurrentHour(alarm.getAlarmTime().get(Calendar.HOUR_OF_DAY));
+        timePicker.setCurrentMinute(alarm.getAlarmTime().get(Calendar.MINUTE));
 
         timePicker.setOnTimeChangedListener(new TimePicker.OnTimeChangedListener() {
             @Override
@@ -50,11 +54,14 @@ public class AlarmDetailsActivity extends AppCompatActivity
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int resultCode = 666;
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra("ALARM", alarm);
-                resultIntent.putExtra("ALARM_POSITION", alarmPosition);
-                setResult(resultCode, resultIntent);
+                if(alarmPosition!=-1){
+                    resultIntent.putExtra("ALARM_POSITION", alarmPosition);
+                }else{
+                    Toast.makeText(getApplicationContext(), "NEW ALARM FROM FAB", Toast.LENGTH_SHORT).show();
+                }
+                setResult(Settings.ALARM_DETAILS_ACTIVITY_RESULTCODE, resultIntent);
                 finish();
             }
         });

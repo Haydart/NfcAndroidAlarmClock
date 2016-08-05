@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Created by Radek on 2016-05-28.
@@ -76,5 +77,17 @@ public class SharedPrefsManager
             expandableListItems.add(new ExpandableListItem(alarm, Settings.COLLAPSED_HEIGHT));
         }
         return expandableListItems;
+    }
+
+    public boolean wasNfcTagAttached(){
+        return sharedPreferences.getBoolean(Settings.NFC_TAG_ATTACHED,false);
+    }
+
+    public void notifyNfcTagAttached(){
+        sharedPreferences.edit().putBoolean(Settings.NFC_TAG_ATTACHED,true).apply();
+    }
+
+    public void resetNfcTagAttached(){
+        sharedPreferences.edit().putBoolean(Settings.NFC_TAG_ATTACHED,false).apply();
     }
 }

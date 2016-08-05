@@ -23,7 +23,7 @@ import java.util.StringTokenizer;
 /**
  * Created by Radek on 2016-05-27.
  */
-public class Alarm implements Serializable
+public class Alarm implements Parcelable
 {
     @Expose
     private String stringNotation;
@@ -41,6 +41,38 @@ public class Alarm implements Serializable
     private String alarmName = "Alarm Clock";
     @Expose
     private int ID;
+
+    protected Alarm(Parcel in) {
+        stringNotation = in.readString();
+        alarmTonePath = in.readString();
+        alarmName = in.readString();
+        ID = in.readInt();
+    }
+
+    public static final Creator<Alarm> CREATOR = new Creator<Alarm>() {
+        @Override
+        public Alarm createFromParcel(Parcel in) {
+            return new Alarm(in);
+        }
+
+        @Override
+        public Alarm[] newArray(int size) {
+            return new Alarm[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(stringNotation);
+        dest.writeString(alarmTonePath);
+        dest.writeString(alarmName);
+        dest.writeInt(ID);
+    }
 
     public enum Day {
         SUNDAY,

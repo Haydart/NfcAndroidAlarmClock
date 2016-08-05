@@ -146,10 +146,9 @@ public class AlarmsAnimatedExpandableListAdapter extends ArrayAdapter<Expandable
         hourTextView.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            ((MainActivity)context).launchAlarmDetailsActivity(MainActivity.LaunchType.CLICKED_ALARM, position);
             Intent intent = new Intent(context.getApplicationContext(), AlarmDetailsActivity.class);
-            intent.putExtra("ALARM", alarmsListResource.get(position).getAlarm());
-            intent.putExtra("ALARM_POSITION", position);
-            ((MainActivity)context).startActivityForResult(intent, 666);
+
         }
         });
 

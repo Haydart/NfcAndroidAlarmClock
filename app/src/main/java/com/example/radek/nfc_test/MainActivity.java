@@ -1,7 +1,5 @@
 package com.example.radek.nfc_test;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.nfc.NfcAdapter;
@@ -14,9 +12,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.radek.nfc_test.expandingcells.ExpandableListItem;
@@ -25,9 +20,6 @@ import com.example.radek.nfc_test.expandingcells.ExpandingListView;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String TAG = "Alarm Clock";
-    private static final String MIME_TEXT_PLAIN = "text/plain";
-    private TextView textView;
     private NfcAdapter nfcAdapter;
     private FloatingActionButton fab;
     private ExpandingListView alarmsAnimatedExpandableListView;
@@ -35,6 +27,11 @@ public class MainActivity extends AppCompatActivity {
     private AlarmsAnimatedExpandableListAdapter alarmsAdapter;
     private SharedPrefsManager spManager;
     private CoordinatorLayout coordinatorLayout;
+
+    public enum LaunchType{
+        CLICKED_FAB,
+        CLICKED_ALARM;
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -61,11 +58,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getApplicationContext(), AlarmDetailsActivity.class);
-                expandableListItemList.add(new ExpandableListItem(new Alarm(), Settings.COLLAPSED_HEIGHT));
-                intent.putExtra("ALARM", expandableListItemList.get(expandableListItemList.size() - 1).getAlarm()); // pass newly created element
-                intent.putExtra("ALARM_POSITION", expandableListItemList.size() - 1); // indicate that the newly created alarm is on last position
-                startActivityForResult(intent, 666);
+                launchAlarmDetailsActivity(LaunchType.CLICKED_FAB, -1);
             }
         });
 
@@ -93,6 +86,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void launchAlarmDetailsActivity(LaunchType launchType, int position) {
+        Intent intent = new Intent(getApplicationContext(), AlarmDetailsActivity.class);
+
+        if(launchType==LaunchType.CLICKED_ALARM){
+            intent.putExtra("ALARM", expandableListItemList.get(position).getAlarm());
+            intent.putExtra("ALARM_POSITION", position);
+            Toast.makeText(getApplicationContext(), "CLICKED ALARM", Toast.LENGTH_SHORT).show();
+        }else if(launchType==LaunchType.CLICKED_FAB){
+            intent.putExtra("ALARM_POSITION", position); // -1
+            Toast.makeText(getApplicationContext(), "CLICKED FAB", Toast.LENGTH_SHORT).show();
+        }
+        startActivityForResult(intent, Settings.ALARM_DETAILS_ACTIVITY_REQUESTCODE); //in activity, check if it is null
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -107,6 +114,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
     protected void onNewIntent(Intent intent) {
         Snackbar alarmPutOffSnackbar = Snackbar.make(coordinatorLayout, "Proper NFC tag discovered, have a good day!", Snackbar.LENGTH_SHORT);
         alarmPutOffSnackbar.show();
@@ -115,12 +127,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 666) {
-            if (resultCode == 666) {
-                Alarm alarm = (Alarm) data.getExtras().getSerializable("ALARM");
-                int updatedAlarmPosition = data.getIntExtra("ALARM_POSITION", 0);
+        if (requestCode == Settings.ALARM_DETAILS_ACTIVITY_REQUESTCODE) {
+            if (resultCode == Settings.ALARM_DETAILS_ACTIVITY_RESULTCODE) {
+                Alarm alarm = (Alarm) data.getExtras().getParcelable("ALARM");
+                int updatedAlarmPosition = data.getIntExtra("ALARM_POSITION", -1);
 
-                if(updatedAlarmPosition == expandableListItemList.size()) { //if that`s a new alarm
+                if(updatedAlarmPosition == -1) { //if that`s a new alarm
                     expandableListItemList.add(new ExpandableListItem(alarm, Settings.COLLAPSED_HEIGHT));
                 }else{//the alarm was only edited
                     expandableListItemList.get(updatedAlarmPosition).setAlarm(alarm);
