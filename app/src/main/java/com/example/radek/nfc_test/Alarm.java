@@ -130,7 +130,7 @@ public class Alarm implements Parcelable
         if(hour / 9 == 0)
             stringBuilder.append("0");
         stringBuilder.append(hour).append(":");
-        if(minutes / 9 == 0)
+        if(minutes % 9 == 0)
             stringBuilder.append("0");
         stringBuilder.append(minutes);
         this.stringNotation = stringBuilder.toString();

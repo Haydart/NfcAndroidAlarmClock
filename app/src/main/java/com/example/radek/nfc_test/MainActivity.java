@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                 }else{//the alarm was only edited
                     expandableListItemList.get(updatedAlarmPosition).setAlarm(alarm);
                 }
-                alarmsAdapter.setAlarms(expandableListItemList);
+                alarmsAdapter.setAlarmsResource(expandableListItemList);
                 alarmsAdapter.notifyDataSetChanged();
 
                 //newly created or edited alarm are set to active by default
@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         refreshAlarmsList();
-        alarmsAdapter.setAlarms(expandableListItemList);
+        alarmsAdapter.setAlarmsResource(expandableListItemList);
         callNFCAlarmScheduleService();
     }
 
@@ -194,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void OnAlarmDeleted(int position) {
         expandableListItemList.remove(position);
-        alarmsAdapter.setAlarms(expandableListItemList);
+        alarmsAdapter.setAlarmsResource(expandableListItemList);
         alarmsAdapter.notifyDataSetChanged();
 
         spManager.saveAlarmsList(expandableListItemList);

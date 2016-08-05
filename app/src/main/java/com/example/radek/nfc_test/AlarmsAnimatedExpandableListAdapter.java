@@ -164,5 +164,5 @@ public class AlarmsAnimatedExpandableListAdapter extends ArrayAdapter<Expandable
         return rowView;
     }
 
-    public void setAlarms(List<ExpandableListItem> alarms) {alarmsListResource = alarms;}
+    public void setAlarmsResource(List<ExpandableListItem> alarms) {alarmsListResource = alarms;}
 }
