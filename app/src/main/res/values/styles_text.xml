@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="CollapsedTitleTextAppearance" parent="android:TextAppearance">
+        <item name="android:textColor">@color/collapsed_title_color</item>
+        <item name="android:textSize">@dimen/textsize_collapsed_title</item>
+    </style>
+
+    <style name="ExpandedTitleTextAppearance" parent="android:TextAppearance">
+        <item name="android:textColor">@color/expanded_title_color</item>
+        <item name="android:textSize">@dimen/textsize_expanded_title</item>
+    </style>
+</resources>

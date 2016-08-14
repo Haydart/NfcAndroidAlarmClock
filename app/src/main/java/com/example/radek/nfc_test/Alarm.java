@@ -7,24 +7,20 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.widget.Toast;
 
+import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 /**
  * Created by Radek on 2016-05-27.
  */
-public class Alarm implements Parcelable
-{
+public class Alarm implements Parcelable, ParentListItem {
     @Expose
     private String stringNotation;
     @Expose
@@ -32,7 +28,7 @@ public class Alarm implements Parcelable
     @Expose
     private Calendar alarmTime = Calendar.getInstance();
     @Expose
-    private Day[] days = {Day.MONDAY,Day.TUESDAY,Day.WEDNESDAY,Day.THURSDAY,Day.FRIDAY,Day.SATURDAY,Day.SUNDAY,};
+    private Day[] days = {Day.MONDAY, Day.TUESDAY, Day.WEDNESDAY, Day.THURSDAY, Day.FRIDAY, Day.SATURDAY, Day.SUNDAY,};
     @Expose
     private String alarmTonePath = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM).toString();
     @Expose
@@ -74,6 +70,16 @@ public class Alarm implements Parcelable
         dest.writeInt(ID);
     }
 
+    @Override
+    public List<?> getChildItemList() {
+        return Arrays.asList(this); //the child and parent use the same resource (alarm) in the expandable recyclerview
+    }
+
+    @Override
+    public boolean isInitiallyExpanded() {
+        return false;
+    }
+
     public enum Day {
         SUNDAY,
         MONDAY,
@@ -105,32 +111,30 @@ public class Alarm implements Parcelable
         }
     }
 
-    public Alarm(){
+    public Alarm() {
         setStringNotation(alarmTime.get(Calendar.HOUR_OF_DAY), alarmTime.get(Calendar.MINUTE));
     }
 
-    public Alarm(String hour)
-    {
+    public Alarm(String hour) {
         setAlarmTime(hour);
     }
 
-    public void setHour(int hour, int minutes) throws IllegalHourException
-    {
+    public void setHour(int hour, int minutes) throws IllegalHourException {
         setStringNotation(hour, minutes);
         alarmTime.set(Calendar.HOUR_OF_DAY, hour);
-        alarmTime.set(Calendar.MINUTE,minutes);
+        alarmTime.set(Calendar.MINUTE, minutes);
     }
 
     public String getStringNotation() {
         return stringNotation;
     }
 
-    private void setStringNotation(int hour,int minutes) {
+    private void setStringNotation(int hour, int minutes) {
         StringBuilder stringBuilder = new StringBuilder();
-        if(hour / 9 == 0)
+        if (hour / 9 == 0 || hour == 9)
             stringBuilder.append("0");
         stringBuilder.append(hour).append(":");
-        if(minutes % 9 == 0)
+        if (minutes / 9 == 0 || minutes == 9)
             stringBuilder.append("0");
         stringBuilder.append(minutes);
         this.stringNotation = stringBuilder.toString();
@@ -151,13 +155,13 @@ public class Alarm implements Parcelable
 
     public void setAlarmTime(Calendar alarmTime) {
         this.alarmTime = alarmTime;
-        setStringNotation(alarmTime.get(Calendar.HOUR_OF_DAY),alarmTime.get(Calendar.MINUTE));
+        setStringNotation(alarmTime.get(Calendar.HOUR_OF_DAY), alarmTime.get(Calendar.MINUTE));
     }
 
     public Calendar getAlarmTime() {
         if (alarmTime.before(Calendar.getInstance()))
             alarmTime.add(Calendar.DAY_OF_MONTH, 1);
-        while(!Arrays.asList(getDays()).contains(Day.values()[alarmTime.get(Calendar.DAY_OF_WEEK)-1])){
+        while (!Arrays.asList(getDays()).contains(Day.values()[alarmTime.get(Calendar.DAY_OF_WEEK) - 1])) {
             alarmTime.add(Calendar.DAY_OF_MONTH, 1);
         }
         return alarmTime;
@@ -175,25 +179,24 @@ public class Alarm implements Parcelable
         this.days = days;
     }
 
-    public void addDay(Day day){
+    public void addDay(Day day) {
         boolean contains = false;
-        for(Day d : getDays())
-            if(d.equals(day))
+        for (Day d : getDays())
+            if (d.equals(day))
                 contains = true;
-        if(!contains){
+        if (!contains) {
             List<Day> result = new LinkedList<Day>();
-            for(Day d : getDays())
+            for (Day d : getDays())
                 result.add(d);
             result.add(day);
             setDays(result.toArray(new Day[result.size()]));
         }
     }
 
-    public void removeDay(Day day)
-    {
+    public void removeDay(Day day) {
         List<Day> result = new LinkedList<Day>();
-        for(Day d : getDays())
-            if(!d.equals(day))
+        for (Day d : getDays())
+            if (!d.equals(day))
                 result.add(d);
         setDays(result.toArray(new Day[result.size()]));
     }
@@ -226,16 +229,19 @@ public class Alarm implements Parcelable
         this.alarmTonePath = alarmTonePath;
     }
 
-    public int getID() {return ID;}
+    public int getID() {
+        return ID;
+    }
 
     public void setId(int id) {
         this.ID = id;
     }
+
     public String getRepeatDaysString() {
         StringBuilder daysStringBuilder = new StringBuilder();
-        if(getDays().length == Day.values().length){
+        if (getDays().length == Day.values().length) {
             daysStringBuilder.append("Every Day");
-        }else{
+        } else {
             Arrays.sort(getDays(), new Comparator<Day>() {
                 @Override
                 public int compare(Day lhs, Day rhs) {
@@ -243,8 +249,8 @@ public class Alarm implements Parcelable
                     return lhs.ordinal() - rhs.ordinal();
                 }
             });
-            for(Day d : getDays()){
-                switch(d){
+            for (Day d : getDays()) {
+                switch (d) {
                     case TUESDAY:
                     case THURSDAY:
 //					daysStringBuilder.append(d.toString().substring(0, 4));
@@ -255,13 +261,13 @@ public class Alarm implements Parcelable
                 }
                 daysStringBuilder.append(',');
             }
-            daysStringBuilder.setLength(daysStringBuilder.length()-1);
+            daysStringBuilder.setLength(daysStringBuilder.length() - 1);
         }
 
         return daysStringBuilder.toString();
     }
 
-    public String getTimeUntilNextAlarmMessage(){
+    public String getTimeUntilNextAlarmMessage() {
         long timeDifference = getAlarmTime().getTimeInMillis() - System.currentTimeMillis();
         long days = timeDifference / (1000 * 60 * 60 * 24);
         long hours = timeDifference / (1000 * 60 * 60) - (days * 24);
@@ -287,13 +293,14 @@ public class Alarm implements Parcelable
         }
         return alert;
     }
+
     public void schedule(Context context) {
         setAlarmActive(true);
 
         Intent myIntent = new Intent(context, AlarmAlertBroadcastReceiver.class);
         myIntent.putExtra("alarm", this);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, getAlarmTime().getTimeInMillis(), pendingIntent);
     }
 }

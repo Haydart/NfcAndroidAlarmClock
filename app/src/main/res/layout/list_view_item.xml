@@ -44,7 +44,7 @@
 
     </LinearLayout>
 
-    <com.example.radek.nfc_test.expandingcells.ExpandingLayout
+    <com.example.radek.nfc_test.expandingrecyclerview.ExpandingLayout
             android:id="@+id/expanding_layout"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
@@ -63,6 +63,6 @@
             android:paddingBottom="20dp"
             android:text="adsckjbhadscdascbdhascbhasdcbhasdckjbhadsckjbasdckjbhasdckjbasdckjdascbhkasdcbhdscbhasdckjbhasdckjhbadsckbasdckjbhasdckjbasdckjbadsckjbhasdckbasdckjbhasdckbhasdckbhadsckjbasdckjbasdbdckjbasc" />
 
-    </com.example.radek.nfc_test.expandingcells.ExpandingLayout>
+    </com.example.radek.nfc_test.expandingrecyclerview.ExpandingLayout>
 
 </LinearLayout>

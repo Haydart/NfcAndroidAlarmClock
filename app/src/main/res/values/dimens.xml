@@ -3,4 +3,30 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+
+    <dimen name="splash_screen_logo_size">200dp</dimen>
+    <dimen name="splash_screen_logo_border">2dp</dimen>
+    <dimen name="text_splash_screen">40sp</dimen>
+    <dimen name="default_layout_margin">16dp</dimen>
+    <dimen name="main_activity_appbarlayout">220dp</dimen>
+    <dimen name="main_activity_title_margin_start">48dp</dimen>
+    <dimen name="main_activity_title_margin_end">64dp</dimen>
+    <dimen name="main_activity_logo_size">100dp</dimen>
+    <dimen name="default_layout_margin_halved">8dp</dimen>
+    <dimen name="album_details_activity_logo_size">300dp</dimen>
+
+    <dimen name="textsize_collapsed_title">18sp</dimen>
+    <dimen name="textsize_expanded_title">26sp</dimen>
+    <dimen name="default_layout_margin_quarted">4dp</dimen>
+
+    <dimen name="textsize_cardview_title">14sp</dimen>
+    <dimen name="textsize_cardview_subtitle">12sp</dimen>
+    <dimen name="textsize_cardview_text">14sp</dimen>
+    <dimen name="main_activity_ctl_margin_start">48dp</dimen>
+    <dimen name="headerLinearLayoutMargin">32dp</dimen>
+    <dimen name="textViewHeaderMargin">8dp</dimen>
+    <dimen name="albumDetailsOverlapTop">40dp</dimen>
+    <dimen name="alarm_list_hour_text_size">40sp</dimen>
+    <dimen name="alarm_list_checkbox_margin">8dp</dimen>
+    <dimen name="alarm_list_checkbox_size">64dp</dimen>
 </resources>

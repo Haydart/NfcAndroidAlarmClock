@@ -3,18 +3,15 @@ package com.example.radek.nfc_test;
 import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import java.util.Calendar;
 
-public class AlarmDetailsActivity extends AppCompatActivity
-{
+public class AlarmDetailsActivity extends AppCompatActivity {
     private TimePicker timePicker;
     private Alarm alarm;
     private int alarmPosition;
@@ -22,8 +19,7 @@ public class AlarmDetailsActivity extends AppCompatActivity
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_alarm_details);
         timePicker = (TimePicker) findViewById(R.id.timePicker);
@@ -32,8 +28,8 @@ public class AlarmDetailsActivity extends AppCompatActivity
 
         Intent intent = getIntent();
         alarm = intent.getParcelableExtra("ALARM");
-        alarmPosition = intent.getIntExtra("ALARM_POSITION",-1);
-        if(alarm==null){
+        alarmPosition = intent.getIntExtra("ALARM_POSITION", -1);
+        if (alarm == null) {
             alarm = new Alarm();
         }
 
@@ -56,12 +52,10 @@ public class AlarmDetailsActivity extends AppCompatActivity
             public void onClick(View v) {
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra("ALARM", alarm);
-                if(alarmPosition!=-1){
+                if (alarmPosition != -1) {
                     resultIntent.putExtra("ALARM_POSITION", alarmPosition);
-                }else{
-                    Toast.makeText(getApplicationContext(), "NEW ALARM FROM FAB", Toast.LENGTH_SHORT).show();
                 }
-                setResult(Settings.ALARM_DETAILS_ACTIVITY_RESULTCODE, resultIntent);
+                setResult(Constants.ALARM_DETAILS_ACTIVITY_RESULTCODE, resultIntent);
                 finish();
             }
         });

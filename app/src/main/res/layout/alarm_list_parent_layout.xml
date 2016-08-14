@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/collapsedListItemPartLayout">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="@string/hour_placeholder"
+            android:textSize="@dimen/alarm_list_hour_text_size"
+            android:id="@+id/alarmHourTextView"
+            android:textStyle="bold"
+            android:padding="@dimen/default_layout_margin"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentStart="true"
+            android:textIsSelectable="false"
+            android:textColor="@color/primary"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/alarm_day_today"
+            android:id="@+id/alarmDayTextView"
+            android:layout_below="@+id/alarmHourTextView"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="@dimen/default_layout_margin"
+            android:layout_marginBottom="@dimen/default_layout_margin"
+            android:textIsSelectable="false"
+            android:textColor="@color/primary"/>
+
+        <CheckBox
+            android:layout_width="@dimen/alarm_list_checkbox_size"
+            android:layout_height="64dp"
+            android:id="@+id/alarmStateCheckBox"
+            android:checked="false"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="@dimen/alarm_list_checkbox_margin"
+            android:shadowColor="@color/primary"/>
+
+</RelativeLayout>

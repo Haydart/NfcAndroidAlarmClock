@@ -4,4 +4,7 @@
     <string name="title_activity_main2">Main2Activity</string>
     <string name="title_activity_ssdcsdc_ads">SsdcsdcAds</string>
     <string name="alarm_day_today">Today</string>
+    <string name="madonnaheaderimage">headerImage</string>
+    <string name="placeholder_string">asxouysfvohvouydfvousdfvougasdoiauhsdcouysdacoauhsdfvluhaouysdacouyscdauyscdayuascdouysdacouysdacouyasdcouyasdcouyscdaouysdacouysdacouygasdcouysdacouygasdocuygasoduyca</string>
+    <string name="hour_placeholder">00:00</string>
 </resources>

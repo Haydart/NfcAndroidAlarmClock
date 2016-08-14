@@ -1,14 +1,9 @@
 package com.example.radek.nfc_test;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
-
-import com.example.radek.nfc_test.expandingcells.ExpandableListItem;
 
 import java.util.Comparator;
 import java.util.List;
@@ -50,11 +45,11 @@ public class AlarmService extends Service {
             }
         });
 
-        List<ExpandableListItem> expandableListItems = spManager.loadExpandableItemsList();
+        List<Alarm> alarmsList = spManager.loadAlarmsList();
 
-        for(ExpandableListItem item : expandableListItems){
-            if(item.getAlarm().isAlarmActive())
-                alarmTreeSet.add(item.getAlarm());
+        for(Alarm item : alarmsList){
+            if(item.isAlarmActive())
+                alarmTreeSet.add(item);
         }
         if(alarmTreeSet.iterator().hasNext()){
             return alarmTreeSet.iterator().next();
