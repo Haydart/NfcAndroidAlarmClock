@@ -20,12 +20,10 @@ import android.widget.Toast;
 
 import com.bignerdranch.expandablerecyclerview.Adapter.ExpandableRecyclerAdapter;
 import com.example.radek.nfc_test.expandingrecyclerview.AlarmExpandableRecyclerViewAdapter;
-import com.example.radek.nfc_test.expandingrecyclerview.LongClickListener;
-import com.example.radek.nfc_test.expandingrecyclerview.RecyclerTouchListener;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
     private NfcAdapter nfcAdapter;
     private FloatingActionButton fab;
     private RecyclerView alarmsExpandableRecyclerView;
@@ -102,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
         alarmsExpandableRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
     }
 
-    private void displayAlarmDeletionAlertDialog(final int position) {
+    public void displayAlarmDeletionAlertDialog(final int position) {
         AlertDialog myQuittingDialogBox = new AlertDialog.Builder(this)
                 //set message, title, and icon
                 .setTitle("Delete")
@@ -110,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
 
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        MainActivity.this.OnAlarmDeleted(position);
+                        MainActivity.this.onAlarmDeleted(position);
                         dialog.dismiss();
                     }
                 })
@@ -231,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
 
         refreshAlarmsList();
         callNFCAlarmScheduleService();
+        printActiveAlarmsList();
     }
 
     public void displayAlarmTimeSnackbar(int alarmPosition) {
@@ -240,17 +239,15 @@ public class MainActivity extends AppCompatActivity {
     public void printActiveAlarmsList() {
         for (int i = 0; i < alarmsList.size(); i++) {
             if (alarmsList.get(i).isAlarmActive()) {
-                //Log.d("ACTIVE ALARM PRINTOUT",alarmsList.get(i).getTimeUntilNextAlarmMessage() + " on " + alarmsList.get(i).getStringNotation() );
-                Log.d("ALARM ACTIVE?", "ALARM " + i + " is " + alarmsList.get(i).isAlarmActive());
+                Log.d("ACTIVE ALARM PRINTOUT", alarmsList.get(i).getTimeUntilNextAlarmMessage() + " on " + alarmsList.get(i).getStringNotation());
+                //Log.d("ALARM ACTIVE?", "ALARM " + i + " is " + alarmsList.get(i).isAlarmActive());
             }
         }
     }
 
-    public void OnAlarmDeleted(int position) {
+    private void onAlarmDeleted(int position) {
         alarmsList.remove(position);
-        alarmsAdapter.notifyItemRemoved(position);
-        alarmsAdapter.notifyDataSetChanged();
-
+        alarmsAdapter.updateAlarmsList(alarmsList);
         spManager.saveAlarmsList(alarmsList);
         callNFCAlarmScheduleService();
     }

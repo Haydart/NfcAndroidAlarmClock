@@ -25,6 +25,14 @@ public class AlarmExpandableRecyclerViewAdapter extends ExpandableRecyclerAdapte
     private MainActivity mainActivity;
     private List<Alarm> alarmsListResource;
 
+    public interface OnItemClickListener {
+        public void onItemClicked(int position);
+    }
+
+    public interface OnItemLongClickListener {
+        public boolean onItemLongClicked(int position);
+    }
+
     public AlarmExpandableRecyclerViewAdapter(MainActivity mainActivity, List<Alarm> parentItemList) {
         super(parentItemList);
         this.mainActivity = mainActivity;
@@ -56,7 +64,15 @@ public class AlarmExpandableRecyclerViewAdapter extends ExpandableRecyclerAdapte
         parentViewHolder.mAlarmHourTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context, "clicked hour in element " + position, Toast.LENGTH_SHORT).show();
+                mainActivity.launchAlarmDetailsActivity(MainActivity.LaunchType.CLICKED_ALARM, position);
+            }
+        });
+
+        parentViewHolder.rowView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                mainActivity.displayAlarmDeletionAlertDialog(position);
+                return false;
             }
         });
 

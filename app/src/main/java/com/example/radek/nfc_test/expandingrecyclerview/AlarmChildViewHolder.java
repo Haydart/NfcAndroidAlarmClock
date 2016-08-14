@@ -18,4 +18,6 @@ public class AlarmChildViewHolder extends ChildViewHolder {
         placeholderTextView = (TextView) itemView.findViewById(R.id.placeHolderChildTextView);
     }
 
+
+
 }
