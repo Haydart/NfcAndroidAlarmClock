@@ -40,7 +40,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:title="@string/app_name">
 
             </android.support.v7.widget.Toolbar>
 
@@ -49,7 +50,9 @@
 
         <include layout="@layout/content_main" />
 
-    <android.support.design.widget.FloatingActionButton
+    <com.example.radek.nfc_test.behavior.ScrollFloatingActionButton
+        app:layout_behavior="com.example.radek.nfc_test.behavior.FabScrollBehavior"
+        app:direction="right"
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.Toast;
 
 import com.bignerdranch.expandablerecyclerview.Adapter.ExpandableRecyclerAdapter;
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
@@ -57,11 +56,11 @@ public class AlarmExpandableRecyclerViewAdapter extends ExpandableRecyclerAdapte
     public void onBindParentViewHolder(final AlarmParentViewHolder parentViewHolder, final int position, ParentListItem parentListItem) {
         Alarm alarm = (Alarm) parentListItem;
 
-        parentViewHolder.mAlarmHourTextView.setText(alarm.getStringNotation());
-        parentViewHolder.mAlarmDayTextView.setText(alarm.getAlarmName());
+        parentViewHolder.alarmHourTextView.setText(alarm.getStringNotation());
+        parentViewHolder.alarmDayTextView.setText(alarm.getAlarmName());
         parentViewHolder.alarmCheckBox.setChecked(alarm.isAlarmActive());
 
-        parentViewHolder.mAlarmHourTextView.setOnClickListener(new View.OnClickListener() {
+        parentViewHolder.alarmHourTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mainActivity.launchAlarmDetailsActivity(MainActivity.LaunchType.CLICKED_ALARM, position);

@@ -28,5 +28,14 @@
     <dimen name="albumDetailsOverlapTop">40dp</dimen>
     <dimen name="alarm_list_hour_text_size">40sp</dimen>
     <dimen name="alarm_list_checkbox_margin">8dp</dimen>
-    <dimen name="alarm_list_checkbox_size">64dp</dimen>
+    <dimen name="alarm_list_checkbox_size">32dp</dimen>
+    <dimen name="alarmDayLeftMargin">24dp</dimen>
+    <dimen name="alarmDayPadding">4dp</dimen>
+    <dimen name="alarmHourBottomPadding">8dp</dimen>
+    <dimen name="recyclerViewDividerHeight">1dp</dimen>
+    <dimen name="dividerMarginSide">32dp</dimen>
+    <dimen name="checkBoxMarginTop">20dp</dimen>
+    <dimen name="checkBoxMarginEnd">32dp</dimen>
+    <dimen name="childLayoutMarginStart">32dp</dimen>
+    <dimen name="childLayoutMarginEnd">32dp</dimen>
 </resources>

@@ -23,7 +23,7 @@ import com.example.radek.nfc_test.expandingrecyclerview.AlarmExpandableRecyclerV
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
     private NfcAdapter nfcAdapter;
     private FloatingActionButton fab;
     private RecyclerView alarmsExpandableRecyclerView;
@@ -87,7 +87,8 @@ public class MainActivity extends AppCompatActivity{
         alarmsAdapter.setExpandCollapseListener(new ExpandableRecyclerAdapter.ExpandCollapseListener() {
             @Override
             public void onListItemExpanded(int position) {
-                Toast.makeText(getApplicationContext(), "expanded " + position, Toast.LENGTH_SHORT).show();
+                alarmsAdapter.collapseAllParents(); //only one expanded at a time
+                alarmsAdapter.expandParent(position);
             }
 
             @Override

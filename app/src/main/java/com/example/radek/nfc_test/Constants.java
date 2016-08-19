@@ -16,4 +16,6 @@ public class Constants{
     public static final String ALARMS_WRITE_POINT = "alarms_write_point";
     public static final String INTENT_ALARM = "extra_intent_alarm";
     public static final String INTENT_ALARM_POSITION = "extra_intent_alarm_position";
+    public static final float OUT_OFF_SCREEN_PX = 300;
+    public static final long CUSTOM_HIDE_SHOW_FAB_DURATION = 250;
 }

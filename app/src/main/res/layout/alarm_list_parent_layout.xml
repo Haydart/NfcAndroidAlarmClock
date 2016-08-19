@@ -4,6 +4,15 @@
     android:layout_height="wrap_content"
     android:id="@+id/collapsedListItemPartLayout">
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/recyclerViewDividerHeight"
+            android:id="@+id/recyclerViewDivider"
+            android:background="@color/primary"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="@dimen/default_layout_margin"
+            android:layout_marginEnd="@dimen/dividerMarginSide" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -12,11 +21,13 @@
             android:textSize="@dimen/alarm_list_hour_text_size"
             android:id="@+id/alarmHourTextView"
             android:textStyle="bold"
-            android:padding="@dimen/default_layout_margin"
-            android:layout_alignParentTop="true"
+            android:layout_below="@id/recyclerViewDivider"
             android:layout_alignParentStart="true"
             android:textIsSelectable="false"
-            android:textColor="@color/primary"/>
+            android:textColor="@color/primary"
+            android:paddingLeft="@dimen/default_layout_margin"
+            android:paddingTop="@dimen/default_layout_margin"
+            android:paddingBottom="@dimen/alarmHourBottomPadding" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -24,21 +35,32 @@
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="@string/alarm_day_today"
             android:id="@+id/alarmDayTextView"
+            android:textIsSelectable="false"
+            android:textColor="@color/primary"
             android:layout_below="@+id/alarmHourTextView"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="@dimen/default_layout_margin"
-            android:layout_marginBottom="@dimen/default_layout_margin"
-            android:textIsSelectable="false"
-            android:textColor="@color/primary"/>
+            android:layout_marginStart="@dimen/alarmDayLeftMargin"
+            android:layout_marginBottom="@dimen/default_layout_margin" />
 
         <CheckBox
             android:layout_width="@dimen/alarm_list_checkbox_size"
-            android:layout_height="64dp"
+            android:layout_height="@dimen/alarm_list_checkbox_size"
             android:id="@+id/alarmStateCheckBox"
             android:checked="false"
-            android:layout_alignParentTop="true"
+            android:layout_below="@id/recyclerViewDivider"
             android:layout_alignParentEnd="true"
-            android:layout_margin="@dimen/alarm_list_checkbox_margin"
-            android:shadowColor="@color/primary"/>
+            android:textColorHighlight="@color/primary"
+            android:layout_marginTop="@dimen/checkBoxMarginTop"
+            android:layout_marginEnd="@dimen/checkBoxMarginEnd" />
+
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:id="@+id/arrowExpandImageView"
+            android:layout_alignBottom="@+id/alarmDayTextView"
+            android:layout_alignStart="@+id/alarmStateCheckBox"
+            android:src="@drawable/ic_keyboard_arrow_down_white_24dp"
+            android:tint="@color/primary"
+            android:contentDescription="@string/dropdownarrow" />
 
 </RelativeLayout>

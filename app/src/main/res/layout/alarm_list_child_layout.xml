@@ -9,6 +9,9 @@
         android:layout_height="wrap_content"
         android:text="@string/placeholder_string"
         android:id="@+id/placeHolderChildTextView"
+        android:layout_marginStart="@dimen/childLayoutMarginStart"
+        android:layout_marginEnd="@dimen/childLayoutMarginEnd"
+        android:layout_marginBottom="@dimen/default_layout_margin"
         android:textColor="@color/primary"/>
 
 </RelativeLayout>
