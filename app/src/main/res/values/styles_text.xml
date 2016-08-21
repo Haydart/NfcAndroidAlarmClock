@@ -8,5 +8,6 @@
     <style name="ExpandedTitleTextAppearance" parent="android:TextAppearance">
         <item name="android:textColor">@color/expanded_title_color</item>
         <item name="android:textSize">@dimen/textsize_expanded_title</item>
+        <item name="android:textStyle">bold</item>
     </style>
 </resources>

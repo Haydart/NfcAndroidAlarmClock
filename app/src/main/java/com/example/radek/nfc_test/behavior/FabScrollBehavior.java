@@ -16,6 +16,8 @@ import java.util.List;
  */
 public class FabScrollBehavior extends CoordinatorLayout.Behavior<ScrollFloatingActionButton>{
 
+    private boolean rvScrollOccurred = false;
+
     public FabScrollBehavior() {
         super();
     }
@@ -34,11 +36,11 @@ public class FabScrollBehavior extends CoordinatorLayout.Behavior<ScrollFloating
     public void onStopNestedScroll(CoordinatorLayout coordinatorLayout, ScrollFloatingActionButton child, View target) {
         super.onStopNestedScroll(coordinatorLayout, child, target);
         child.showModified();
+
     }
 
     @Override
     public void onNestedScroll(CoordinatorLayout coordinatorLayout, ScrollFloatingActionButton child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-
     }
 
     @Override

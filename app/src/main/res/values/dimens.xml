@@ -16,7 +16,7 @@
     <dimen name="album_details_activity_logo_size">300dp</dimen>
 
     <dimen name="textsize_collapsed_title">18sp</dimen>
-    <dimen name="textsize_expanded_title">26sp</dimen>
+    <dimen name="textsize_expanded_title">28sp</dimen>
     <dimen name="default_layout_margin_quarted">4dp</dimen>
 
     <dimen name="textsize_cardview_title">14sp</dimen>
