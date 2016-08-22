@@ -52,23 +52,6 @@ public class MainActivity extends AppCompatActivity {
 
         findReferences();
 
-        /*alarmsExpandableRecyclerView.addOnItemTouchListener(new RecyclerTouchListener(this,
-                alarmsExpandableRecyclerView, new LongClickListener() {
-            @Override
-            public void onClick(View view, final int position) {
-                Toast.makeText(MainActivity.this, "Single Click on position        :"+position,
-                        Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onLongClick(View view, int position) {
-                Toast.makeText(MainActivity.this, "Long press on position :"+position,
-                        Toast.LENGTH_LONG).show();
-
-                displayAlarmDeletionAlertDialog(position);
-            }
-        }));*/
-
         alarmsList = spManager.loadAlarmsList();
         initializeRecyclerView();
         checkForNfcService();
@@ -93,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onListItemCollapsed(int position) {
-                Toast.makeText(getApplicationContext(), "collapsed " + position, Toast.LENGTH_SHORT).show();
             }
         });
 

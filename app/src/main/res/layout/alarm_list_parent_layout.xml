@@ -42,7 +42,7 @@
             android:layout_marginStart="@dimen/alarmDayLeftMargin"
             android:layout_marginBottom="@dimen/default_layout_margin" />
 
-        <android.support.v7.widget.AppCompatCheckBox
+        <CheckBox
             android:layout_width="@dimen/alarm_list_checkbox_size"
             android:layout_height="@dimen/alarm_list_checkbox_size"
             android:id="@+id/alarmStateCheckBox"
@@ -51,7 +51,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginTop="@dimen/checkBoxMarginTop"
             android:layout_marginEnd="@dimen/checkBoxMarginEnd"
-            app:buttonTint="@color/checkbox_tint"/>
+            android:buttonTint="@color/checkbox_tint"/>
 
         <ImageView
             android:layout_width="32dp"
