@@ -2,15 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.radek.nfc_test">
 
-    <uses-sdk
-        android:minSdkVersion="18"
-        android:targetSdkVersion="23" />
-
     <uses-permission android:name="android.permission.NFC" />
-
-    <uses-feature android:name="android.hardware.nfc"
-        android:required="true" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -18,13 +10,17 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
+    <uses-feature
+        android:name="android.hardware.nfc"
+        android:required="true" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:supportsRtl="true"
+        android:supportsRtl="false"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity"
+        <activity android:name="ui.MainActivity"
             android:theme="@style/SplashActivityTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -47,27 +43,27 @@
                 android:resource="@xml/nfc_tech_filter" />
         </activity>
         <activity
-            android:name=".AlarmDetailsActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name="ui.AlarmDetailsActivity"
+            android:parentActivityName="ui.MainActivity" />
+
+        <activity
+            android:name="ui.AlarmAlertActivity"
+            android:label="Alarm Clock"
+            android:screenOrientation="portrait" />
 
         <service
-            android:name=".AlarmService"
+            android:name="background.AlarmService"
             android:icon="@drawable/ic_launcher"
-            android:label="@string/app_name"></service>
+            android:label="@string/app_name" />
 
-        <receiver android:name=".AlarmServiceBroadcastReceiver">
+        <receiver android:name="background.AlarmServiceBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name=".AlarmAlertActivity"
-            android:label="Alarm Clock"
-            android:screenOrientation="portrait"></activity>
-
-        <receiver android:name=".AlarmAlertBroadcastReceiver" />
-        <receiver android:name=".PhoneStateChangedBroadcastReceiver">
+        <receiver android:name="background.AlarmAlertBroadcastReceiver" />
+        <receiver android:name="background.PhoneStateChangedBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
