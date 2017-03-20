@@ -1,13 +1,17 @@
+plugins {
+    id "me.tatarka.retrolambda" version "3.6.0"
+}
+
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 25
     buildToolsVersion '25.0.0'
 
     defaultConfig {
-        applicationId "com.example.radek.nfc_test"
-        minSdkVersion 19
-        targetSdkVersion 23
+        applicationId "com.rmakowiecki.nfcalarmclock"
+        minSdkVersion 21
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
     }
@@ -20,7 +24,7 @@ android {
 }
 
 ext {
-    supportLibVersion = '23.0.1'
+    supportLibVersion = '25.2.0'
 }
 
 dependencies {
@@ -31,7 +35,22 @@ dependencies {
     compile "com.android.support:gridlayout-v7:${supportLibVersion}"
     compile "com.android.support:palette-v7:${supportLibVersion}"
     compile "com.android.support:recyclerview-v7:${supportLibVersion}"
+
     compile 'com.bignerdranch.android:expandablerecyclerview:2.1.1'
+
+    compile 'com.jakewharton.rxbinding:rxbinding:1.0.1'
+    compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'io.reactivex:rxjava:1.2.1'
+    compile 'com.artemzin.rxjava:proguard-rules:1.2.1.0'
+
+    compile 'com.google.code.gson:gson:2.7'
     testCompile 'junit:junit:4.12'
-    compile 'com.google.code.gson:gson:2.6.2'
+
+    //Butterknife
+    compile 'com.jakewharton:butterknife:8.5.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
+
+    //No-Op
+    provided "com.jenzz.noop:annotation:1.2.0"
+    annotationProcessor "com.jenzz.noop:processor:1.2.0"
 }

@@ -8,7 +8,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
-
 import java.util.List;
 
 /**
@@ -16,10 +15,7 @@ import java.util.List;
  */
 public class FabScrollBehavior extends CoordinatorLayout.Behavior<ScrollFloatingActionButton> {
 
-    private boolean rvScrollOccurred = false;
-
     public FabScrollBehavior() {
-        super();
     }
 
     public FabScrollBehavior(Context context, AttributeSet attrs) {
@@ -39,8 +35,8 @@ public class FabScrollBehavior extends CoordinatorLayout.Behavior<ScrollFloating
     }
 
     @Override
-    public void onNestedScroll(CoordinatorLayout coordinatorLayout, ScrollFloatingActionButton child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed,
-            int dyUnconsumed) {
+    public void onNestedScroll(CoordinatorLayout coordinatorLayout, ScrollFloatingActionButton child,
+            View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
     }
 
     @Override
@@ -59,8 +55,7 @@ public class FabScrollBehavior extends CoordinatorLayout.Behavior<ScrollFloating
         return false;
     }
 
-    private float getFabTranslationYForSnackbar(CoordinatorLayout parent,
-            FloatingActionButton fab) {
+    private float getFabTranslationYForSnackbar(CoordinatorLayout parent, FloatingActionButton fab) {
         float minOffset = 0;
         final List<View> dependencies = parent.getDependencies(fab);
         for (int i = 0, z = dependencies.size(); i < z; i++) {
@@ -70,7 +65,6 @@ public class FabScrollBehavior extends CoordinatorLayout.Behavior<ScrollFloating
                         ViewCompat.getTranslationY(view) - view.getHeight());
             }
         }
-
         return minOffset;
     }
 }

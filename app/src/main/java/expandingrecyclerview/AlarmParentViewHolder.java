@@ -8,10 +8,9 @@ import android.view.animation.RotateAnimation;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.bignerdranch.expandablerecyclerview.ViewHolder.ParentViewHolder;
-import ui.MainActivity;
 import com.example.radek.nfc_test.R;
+import ui.alarms_list.AlarmsActivity;
 
 /**
  * Created by Radek on 2016-08-13.
@@ -27,9 +26,9 @@ public class AlarmParentViewHolder extends ParentViewHolder{
     public CheckBox alarmCheckBox;
     public ImageView arrowExpandImageView;
     private Context context;
-    private MainActivity mainActivity;
+    private AlarmsActivity mainActivity;
 
-    public AlarmParentViewHolder(MainActivity mainActivity, View itemView) {
+    public AlarmParentViewHolder(AlarmsActivity mainActivity, View itemView) {
         super(itemView);
         this.rowView = itemView;
         this.mainActivity = mainActivity;

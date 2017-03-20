@@ -3,14 +3,11 @@ package background;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import ui.AlarmAlertActivity;
-import model.Alarm;
 import android.os.Bundle;
 import android.util.Log;
+import model.Alarm;
+import ui.AlarmAlertActivity;
 
-/**
- * Created by Radek on 2016-05-28.
- */
 public class AlarmAlertBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -23,13 +20,9 @@ public class AlarmAlertBroadcastReceiver extends BroadcastReceiver {
         final Alarm alarm = (Alarm) bundle.getSerializable("alarm");
 
         Intent nfcAlarmAlertActivityIntent;
-
         nfcAlarmAlertActivityIntent = new Intent(context, AlarmAlertActivity.class);
-
         nfcAlarmAlertActivityIntent.putExtra("alarm", alarm);
-
         nfcAlarmAlertActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
         context.startActivity(nfcAlarmAlertActivityIntent);
     }
 }

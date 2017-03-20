@@ -3,17 +3,12 @@ package misc;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import model.Alarm;
 
-/**
- * Created by Radek on 2016-05-28.
- */
 public class SharedPrefsManager {
     private SharedPreferences sharedPreferences;
     private Context activityContext;

@@ -1,66 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/collapsedListItemPartLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/collapsedListItemPartLayout">
+    android:layout_height="wrap_content">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/recyclerViewDividerHeight"
-            android:id="@+id/recyclerViewDivider"
-            android:background="@color/primary_light"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="@dimen/default_layout_margin"
-            android:layout_marginEnd="@dimen/dividerMarginSide"
-            android:visibility="gone"/>
+    <View
+        android:id="@+id/recyclerViewDivider"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/recyclerViewDividerHeight"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="@dimen/dividerMarginSide"
+        android:layout_marginStart="@dimen/default_layout_margin"
+        android:background="@color/primary_light"
+        android:visibility="gone" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="@string/hour_placeholder"
-            android:textSize="@dimen/alarm_list_hour_text_size"
-            android:id="@+id/alarmHourTextView"
-            android:textStyle="bold"
-            android:layout_below="@id/recyclerViewDivider"
-            android:layout_alignParentStart="true"
-            android:textIsSelectable="false"
-            android:paddingLeft="@dimen/default_layout_margin"
-            android:paddingTop="@dimen/default_layout_margin"
-            android:paddingBottom="@dimen/alarmHourBottomPadding" />
+    <TextView
+        android:id="@+id/alarmHourTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/recyclerViewDivider"
+        android:paddingBottom="@dimen/alarmHourBottomPadding"
+        android:paddingLeft="@dimen/default_layout_margin"
+        android:paddingTop="@dimen/default_layout_margin"
+        android:text="@string/hour_placeholder"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textIsSelectable="false"
+        android:textSize="@dimen/alarm_list_hour_text_size"
+        android:textStyle="bold" />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="@string/alarm_day_today"
-            android:id="@+id/alarmDayTextView"
-            android:textIsSelectable="false"
-            android:layout_below="@+id/alarmHourTextView"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="@dimen/alarmDayLeftMargin"
-            android:layout_marginBottom="@dimen/default_layout_margin" />
+    <TextView
+        android:id="@+id/alarmDayTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/alarmHourTextView"
+        android:layout_marginBottom="@dimen/default_layout_margin"
+        android:layout_marginStart="@dimen/alarmDayLeftMargin"
+        android:text="@string/alarm_day_today"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textIsSelectable="false" />
 
-        <CheckBox
-            android:layout_width="@dimen/alarm_list_checkbox_size"
-            android:layout_height="@dimen/alarm_list_checkbox_size"
-            android:id="@+id/alarmStateCheckBox"
-            android:checked="false"
-            android:layout_below="@id/recyclerViewDivider"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="@dimen/checkBoxMarginTop"
-            android:layout_marginEnd="@dimen/checkBoxMarginEnd"
-            android:buttonTint="@color/checkbox_tint"/>
+    <CheckBox
+        android:id="@+id/alarmStateCheckBox"
+        android:layout_width="@dimen/alarm_list_checkbox_size"
+        android:layout_height="@dimen/alarm_list_checkbox_size"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/recyclerViewDivider"
+        android:layout_marginEnd="@dimen/checkBoxMarginEnd"
+        android:layout_marginTop="@dimen/checkBoxMarginTop"
+        android:buttonTint="@color/checkbox_tint"
+        android:checked="false" />
 
-        <ImageView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:id="@+id/arrowExpandImageView"
-            android:layout_alignBottom="@+id/alarmDayTextView"
-            android:layout_alignStart="@+id/alarmStateCheckBox"
-            android:src="@drawable/ic_keyboard_arrow_down_white_24dp"
-            android:tint="@color/abc_secondary_text_material_dark"
-            android:contentDescription="@string/dropdownarrow" />
+    <ImageView
+        android:id="@+id/arrowExpandImageView"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignBottom="@+id/alarmDayTextView"
+        android:layout_alignStart="@+id/alarmStateCheckBox"
+        android:contentDescription="@string/dropdownarrow"
+        android:src="@drawable/ic_keyboard_arrow_down_white_24dp"
+        android:tint="@color/abc_secondary_text_material_dark" />
 
 </RelativeLayout>

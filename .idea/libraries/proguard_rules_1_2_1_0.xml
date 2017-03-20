@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="proguard-rules-1.2.1.0">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.android/build-cache/679179c061d31227de0417c95c22a49a4a802765/output/res" />
+      <root url="jar://$USER_HOME$/.android/build-cache/679179c061d31227de0417c95c22a49a4a802765/output/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

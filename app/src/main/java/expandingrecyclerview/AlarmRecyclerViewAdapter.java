@@ -5,23 +5,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-
 import com.bignerdranch.expandablerecyclerview.Adapter.ExpandableRecyclerAdapter;
 import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
-import model.Alarm;
-import ui.MainActivity;
 import com.example.radek.nfc_test.R;
-
 import java.util.List;
+import model.Alarm;
+import ui.alarms_list.AlarmsActivity;
 
 /**
  * Created by Radek on 2016-08-13.
  */
-public class AlarmExpandableRecyclerViewAdapter extends ExpandableRecyclerAdapter<AlarmParentViewHolder, AlarmChildViewHolder> {
+public class AlarmRecyclerViewAdapter extends ExpandableRecyclerAdapter<AlarmParentViewHolder, AlarmChildViewHolder> {
 
     private LayoutInflater inflater;
     private Context context;
-    private MainActivity mainActivity;
+    private AlarmsActivity mainActivity;
     private List<Alarm> alarmsListResource;
 
     public interface OnItemClickListener {
@@ -32,7 +30,7 @@ public class AlarmExpandableRecyclerViewAdapter extends ExpandableRecyclerAdapte
         public boolean onItemLongClicked(int position);
     }
 
-    public AlarmExpandableRecyclerViewAdapter(MainActivity mainActivity, List<Alarm> parentItemList) {
+    public AlarmRecyclerViewAdapter(AlarmsActivity mainActivity, List<Alarm> parentItemList) {
         super(parentItemList);
         this.mainActivity = mainActivity;
         this.context = mainActivity.getApplicationContext();
@@ -63,7 +61,7 @@ public class AlarmExpandableRecyclerViewAdapter extends ExpandableRecyclerAdapte
         parentViewHolder.alarmHourTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mainActivity.launchAlarmDetailsActivity(MainActivity.LaunchType.CLICKED_ALARM, position);
+                //mainActivity.launchAlarmDetailsActivity(AlarmsActivity.LaunchType.CLICKED_ALARM, position);
             }
         });
 

@@ -4,17 +4,13 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
-
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import model.Alarm;
 import misc.SharedPrefsManager;
+import model.Alarm;
 
-/**
- * Created by Radek on 2016-05-28.
- */
 public class AlarmService extends Service {
 
     SharedPrefsManager spManager;
@@ -60,22 +56,6 @@ public class AlarmService extends Service {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see android.app.Service#onDestroy()
-     */
-    @Override
-    public void onDestroy() {
-        spManager = null;
-        super.onDestroy();
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see android.app.Service#onStartCommand(android.content.Intent, int, int)
-     */
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(this.getClass().getSimpleName(), "SERVICE STARTED");
@@ -95,5 +75,11 @@ public class AlarmService extends Service {
             Log.d("SERVICE NO ALARMS", "NO ALARMS SET");
         }
         return START_NOT_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        spManager = null;
+        super.onDestroy();
     }
 }

@@ -1,4 +1,4 @@
-package ui;
+package ui.alarms_list;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -7,143 +7,55 @@ import android.graphics.Color;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.Toast;
-
 import background.AlarmServiceBroadcastReceiver;
+import butterknife.BindView;
+import butterknife.OnClick;
 import com.bignerdranch.expandablerecyclerview.Adapter.ExpandableRecyclerAdapter;
-import misc.Constants;
 import com.example.radek.nfc_test.R;
-import misc.SharedPrefsManager;
-import expandingrecyclerview.AlarmExpandableRecyclerViewAdapter;
-
+import expandingrecyclerview.AlarmRecyclerViewAdapter;
 import java.util.List;
+import misc.Constants;
+import misc.SharedPrefsManager;
 import model.Alarm;
+import ui.base.BaseActivity;
 
-public class MainActivity extends AppCompatActivity {
+public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implements AlarmsView {
+
+    @BindView(R.id.alarm_recycler_view) RecyclerView alarmsRecyclerView;
+    @BindView(R.id.coordinatorLayout) CoordinatorLayout coordinatorLayout;
     private NfcAdapter nfcAdapter;
-    private FloatingActionButton fab;
-    private RecyclerView alarmsExpandableRecyclerView;
+    private AlarmRecyclerViewAdapter alarmsAdapter;
     private List<Alarm> alarmsList;
-    private AlarmExpandableRecyclerViewAdapter alarmsAdapter;
     private SharedPrefsManager spManager;
-    private CoordinatorLayout coordinatorLayout;
 
-    public enum LaunchType {
-        CLICKED_FAB,
-        CLICKED_ALARM;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-
-        return super.onCreateOptionsMenu(menu);
+    @OnClick(R.id.fab)
+    public void onFabClicked() {
+        presenter.onActionButtonClicked();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
 
-        findReferences();
+        spManager = new SharedPrefsManager(getApplicationContext());
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
 
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
         alarmsList = spManager.loadAlarmsList();
         initializeRecyclerView();
+        callAlarmScheduleService();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         checkForNfcService();
-        callNFCAlarmScheduleService();
-
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                launchAlarmDetailsActivity(LaunchType.CLICKED_FAB, -1);
-            }
-        });
-    }
-
-    private void initializeRecyclerView() {
-        alarmsAdapter = new AlarmExpandableRecyclerViewAdapter(this, alarmsList);
-        alarmsAdapter.setExpandCollapseListener(new ExpandableRecyclerAdapter.ExpandCollapseListener() {
-            @Override
-            public void onListItemExpanded(int position) {
-                alarmsAdapter.collapseAllParents(); //only one expanded at a time
-                alarmsAdapter.expandParent(position);
-            }
-
-            @Override
-            public void onListItemCollapsed(int position) {
-            }
-        });
-
-        alarmsExpandableRecyclerView.setAdapter(alarmsAdapter);
-        alarmsExpandableRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-    }
-
-    public void displayAlarmDeletionAlertDialog(final int position) {
-        AlertDialog myQuittingDialogBox = new AlertDialog.Builder(this)
-                //set message, title, and icon
-                .setTitle("Delete")
-                .setMessage("Do you want to delete alarm for " + position)
-
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        MainActivity.this.onAlarmDeleted(position);
-                        dialog.dismiss();
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create();
-
-        myQuittingDialogBox.show();
-    }
-
-    private void checkForNfcService() {
-        if (nfcAdapter == null) {
-            Toast.makeText(this, "This device doesn`t support NFC", Toast.LENGTH_SHORT).show();
-            finish();
-        } else {
-            if (!nfcAdapter.isEnabled()) {
-                Snackbar snackbar = Snackbar
-                        .make(coordinatorLayout, "NFC service is disabled", Snackbar.LENGTH_INDEFINITE)
-                        .setAction("SETTINGS", new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                startActivityForResult(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS), 0);
-                            }
-                        });
-                snackbar.setActionTextColor(Color.YELLOW);
-                snackbar.show();
-            } else {
-                Snackbar snackbar = Snackbar
-                        .make(coordinatorLayout, "NFC service is available!", Snackbar.LENGTH_SHORT);
-                snackbar.show();
-            }
-        }
-    }
-
-    public void launchAlarmDetailsActivity(LaunchType launchType, int position) {
-        Intent intent = new Intent(getApplicationContext(), AlarmDetailsActivity.class);
-
-        if (launchType == LaunchType.CLICKED_ALARM) {
-            intent.putExtra("ALARM", alarmsList.get(position));
-            intent.putExtra("ALARM_POSITION", position);
-        } else if (launchType == LaunchType.CLICKED_FAB) {
-            intent.putExtra("ALARM_POSITION", position); // -1
-        }
-        startActivityForResult(intent, Constants.ALARM_DETAILS_ACTIVITY_REQUESTCODE); //in activity, check if it is null
     }
 
     @Override
@@ -160,9 +72,79 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void initPresenter() {
+        presenter = new AlarmsPresenter();
+    }
+
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.activity_alarms;
+    }
+
+    private void initializeRecyclerView() {
+        alarmsAdapter = new AlarmRecyclerViewAdapter(this, alarmsList);
+        alarmsAdapter.setExpandCollapseListener(new ExpandableRecyclerAdapter.ExpandCollapseListener() {
+            @Override
+            public void onListItemExpanded(int position) {
+                alarmsAdapter.collapseAllParents();
+                alarmsAdapter.expandParent(position);
+            }
+
+            @Override
+            public void onListItemCollapsed(int position) {
+                //no-op
+            }
+        });
+
+        alarmsRecyclerView.setAdapter(alarmsAdapter);
+        alarmsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+    }
+
+    @Override
+    public void displayAlarmDeletionAlertDialog(final int position) {
+        AlertDialog alarmDeletionDialog = new AlertDialog.Builder(this)
+                .setTitle("Delete")
+                .setMessage("Do you want to delete alarm for " + position)
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        AlarmsActivity.this.onAlarmDeleted(position);
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        alarmDeletionDialog.show();
+    }
+
+    private void checkForNfcService() {
+        if (nfcAdapter == null) {
+            Toast.makeText(this, "This device doesn`t support NFC", Toast.LENGTH_SHORT).show();
+            finish();
+        } else {
+            if (!nfcAdapter.isEnabled()) {
+                Snackbar
+                        .make(coordinatorLayout, "NFC service is disabled", Snackbar.LENGTH_INDEFINITE)
+                        .setAction("SETTINGS", new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startActivityForResult(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS), 0);
+                            }
+                        }).setActionTextColor(Color.YELLOW).show();
+            } else {
+                Snackbar.make(coordinatorLayout, "NFC service is available!", Snackbar.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
     protected void onNewIntent(Intent intent) {
         spManager.notifyNfcTagAttached();
         super.onNewIntent(intent);
+        // TODO: 16/03/2017 recognize NDEF formatted contents data
         finish();
     }
 
@@ -184,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 //newly created or edited alarm are set to active by default
                 refreshAlarmsList();
                 displayAlarmTimeSnackbar(updatedAlarmPosition);
-                callNFCAlarmScheduleService();
+                callAlarmScheduleService();
             }
         }
     }
@@ -194,15 +176,7 @@ public class MainActivity extends AppCompatActivity {
         alarmsList = spManager.loadAlarmsList();
     }
 
-    private void findReferences() {
-        alarmsExpandableRecyclerView = (RecyclerView) findViewById(R.id.alarm_recycler_view);
-        spManager = new SharedPrefsManager(getApplicationContext());
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
-        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-    }
-
-    protected void callNFCAlarmScheduleService() {
+    protected void callAlarmScheduleService() {
         Intent nfcAlarmServiceIntent = new Intent(this, AlarmServiceBroadcastReceiver.class);
         sendBroadcast(nfcAlarmServiceIntent, null);
     }
@@ -215,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         refreshAlarmsList();
-        callNFCAlarmScheduleService();
+        callAlarmScheduleService();
         printActiveAlarmsList();
     }
 
@@ -236,6 +210,16 @@ public class MainActivity extends AppCompatActivity {
         alarmsList.remove(position);
         alarmsAdapter.updateAlarmsList(alarmsList);
         spManager.saveAlarmsList(alarmsList);
-        callNFCAlarmScheduleService();
+        callAlarmScheduleService();
+    }
+
+    @Override
+    public void displayAlarmModificationDialog() {
+        // TODO: 16/03/2017 implement
+    }
+
+    @Override
+    public void displayAlarmCreationDialog() {
+        // TODO: 16/03/2017 implement
     }
 }
