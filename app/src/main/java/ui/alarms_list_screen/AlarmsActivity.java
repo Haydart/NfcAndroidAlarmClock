@@ -1,4 +1,4 @@
-package ui.alarms_list;
+package ui.alarms_list_screen;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -8,6 +8,7 @@ import android.nfc.NfcAdapter;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -18,21 +19,22 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import com.bignerdranch.expandablerecyclerview.Adapter.ExpandableRecyclerAdapter;
 import com.example.radek.nfc_test.R;
-import expandingrecyclerview.AlarmRecyclerViewAdapter;
+import expanding_recycler_view.alarms_list.AlarmRecyclerViewAdapter;
+import expanding_recycler_view.alarms_list.AlarmsListRowListener;
 import java.util.List;
-import misc.Constants;
-import misc.SharedPrefsManager;
+import misc.PersistentDataStorage;
 import model.Alarm;
 import ui.base.BaseActivity;
+import ui.widget.dialog_fragment.AnalogTimePickerDialogFragment;
 
-public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implements AlarmsView {
+public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implements AlarmsView, AlarmsListRowListener, AlarmDialogListener {
 
     @BindView(R.id.alarm_recycler_view) RecyclerView alarmsRecyclerView;
     @BindView(R.id.coordinatorLayout) CoordinatorLayout coordinatorLayout;
     private NfcAdapter nfcAdapter;
     private AlarmRecyclerViewAdapter alarmsAdapter;
+    private PersistentDataStorage sharedPrefsManager;
     private List<Alarm> alarmsList;
-    private SharedPrefsManager spManager;
 
     @OnClick(R.id.fab)
     public void onFabClicked() {
@@ -42,33 +44,24 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        spManager = new SharedPrefsManager(getApplicationContext());
-        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
-
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        alarmsList = spManager.loadAlarmsList();
-        initializeRecyclerView();
         callAlarmScheduleService();
+        sharedPrefsManager = new PersistentDataStorage(this);
+        initializeRecyclerView();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         checkForNfcService();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        alarmsList = spManager.loadAlarmsList();
-        printActiveAlarmsList();
+        alarmsList = sharedPrefsManager.loadAlarmsList();
+        callAlarmScheduleService();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        spManager.saveAlarmsList(alarmsList);
+        sharedPrefsManager.saveAlarmsList(alarmsList);
     }
 
     @Override
@@ -82,7 +75,7 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
     }
 
     private void initializeRecyclerView() {
-        alarmsAdapter = new AlarmRecyclerViewAdapter(this, alarmsList);
+        alarmsAdapter = new AlarmRecyclerViewAdapter(sharedPrefsManager.loadAlarmsList(), this);
         alarmsAdapter.setExpandCollapseListener(new ExpandableRecyclerAdapter.ExpandCollapseListener() {
             @Override
             public void onListItemExpanded(int position) {
@@ -101,13 +94,13 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
     }
 
     @Override
-    public void displayAlarmDeletionAlertDialog(final int position) {
+    public void displayAlarmDeletionDialog(final int position) {
         AlertDialog alarmDeletionDialog = new AlertDialog.Builder(this)
                 .setTitle("Delete")
                 .setMessage("Do you want to delete alarm for " + position)
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        AlarmsActivity.this.onAlarmDeleted(position);
+                        presenter.onAlarmDeleted(position);
                         dialog.dismiss();
                     }
                 })
@@ -133,7 +126,9 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
                             public void onClick(View v) {
                                 startActivityForResult(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS), 0);
                             }
-                        }).setActionTextColor(Color.YELLOW).show();
+                        })
+                        .setActionTextColor(Color.YELLOW)
+                        .show();
             } else {
                 Snackbar.make(coordinatorLayout, "NFC service is available!", Snackbar.LENGTH_SHORT).show();
             }
@@ -142,38 +137,15 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
 
     @Override
     protected void onNewIntent(Intent intent) {
-        spManager.notifyNfcTagAttached();
+        sharedPrefsManager.notifyNfcTagAttached();
         super.onNewIntent(intent);
         // TODO: 16/03/2017 recognize NDEF formatted contents data
         finish();
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == Constants.ALARM_DETAILS_ACTIVITY_REQUESTCODE) {
-            if (resultCode == Constants.ALARM_DETAILS_ACTIVITY_RESULTCODE) {
-                Alarm alarm = data.getExtras().getParcelable("ALARM");
-                int updatedAlarmPosition = data.getIntExtra("ALARM_POSITION", -1);
-
-                if (updatedAlarmPosition == -1) { //if that`s a new alarm
-                    alarmsList.add(alarm);
-                    updatedAlarmPosition = alarmsList.size() - 1;
-                } else {//the alarm was only edited
-                    alarmsList.set(updatedAlarmPosition, alarm);
-                }
-
-                alarmsAdapter.updateAlarmsList(alarmsList);
-
-                //newly created or edited alarm are set to active by default
-                refreshAlarmsList();
-                displayAlarmTimeSnackbar(updatedAlarmPosition);
-                callAlarmScheduleService();
-            }
-        }
-    }
-
     private void refreshAlarmsList() {
-        spManager.saveAlarmsList(alarmsList);
-        alarmsList = spManager.loadAlarmsList();
+        sharedPrefsManager.saveAlarmsList(alarmsList);
+        alarmsList = sharedPrefsManager.loadAlarmsList();
     }
 
     protected void callAlarmScheduleService() {
@@ -206,20 +178,60 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
         }
     }
 
-    private void onAlarmDeleted(int position) {
-        alarmsList.remove(position);
+    @Override
+    public void displayAlarmCreationDialog() {
+        displayAlarmDialog(null);
+    }
+
+    @Override
+    public void displayAlarmModificationDialog(Alarm alarm, int position) {
+        Bundle arguments = new Bundle();
+        arguments.putParcelable("alarm", alarm);
+        arguments.putInt("position", position);
+        displayAlarmDialog(arguments);
+    }
+
+    private void displayAlarmDialog(Bundle arguments) {
+        DialogFragment analogClockFragment = new AnalogTimePickerDialogFragment();
+        analogClockFragment.setArguments(arguments);
+        analogClockFragment.show(getSupportFragmentManager(), "digitalTimePicker");
+    }
+
+    @Override
+    public void removeAlarmListElement(int position) {
+        alarmsAdapter.remove(position);
         alarmsAdapter.updateAlarmsList(alarmsList);
-        spManager.saveAlarmsList(alarmsList);
+        sharedPrefsManager.saveAlarmsList(alarmsList);
         callAlarmScheduleService();
     }
 
     @Override
-    public void displayAlarmModificationDialog() {
-        // TODO: 16/03/2017 implement
+    public void addAlarmListElement(Alarm alarm) {
+        alarmsAdapter.addAlarm(alarm);
     }
 
     @Override
-    public void displayAlarmCreationDialog() {
-        // TODO: 16/03/2017 implement
+    public void onAlarmModified(Alarm alarm, int position) {
+        alarmsAdapter.modifyAlarm(alarm, position);
+    }
+
+    @Override
+    public void onAlarmCreated(Alarm alarm) {
+        presenter.onAlarmCreated(alarm);
+    }
+
+    @Override
+    public void onListRowLongClick(int position) {
+        presenter.onAlarmListRowLongClick(position);
+    }
+
+    @Override
+    public void onAlarmCheckBoxClicked(Alarm alarm, int position, boolean checked) {
+        presenter.onAlarmCheckboxClicked(position, checked);
+    }
+
+    @Override
+    public void onAlarmHourTextClicked(Alarm alarm, int position) {
+        presenter.onAlarmHourTextClicked(alarm, position);
     }
 }

@@ -8,12 +8,12 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import misc.SharedPrefsManager;
+import misc.PersistentDataStorage;
 import model.Alarm;
 
 public class AlarmService extends Service {
 
-    SharedPrefsManager spManager;
+    PersistentDataStorage spManager;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -24,7 +24,7 @@ public class AlarmService extends Service {
     public void onCreate() {
         Log.d(this.getClass().getSimpleName(), "AlarmService.class onCreate()");
         super.onCreate();
-        spManager = new SharedPrefsManager(getApplicationContext());
+        spManager = new PersistentDataStorage(this);
     }
 
     private Alarm getNext() {

@@ -35,11 +35,6 @@ public class FabScrollBehavior extends CoordinatorLayout.Behavior<ScrollFloating
     }
 
     @Override
-    public void onNestedScroll(CoordinatorLayout coordinatorLayout, ScrollFloatingActionButton child,
-            View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-    }
-
-    @Override
     public boolean layoutDependsOn(CoordinatorLayout parent, ScrollFloatingActionButton child, View dependency) {
         return dependency instanceof Snackbar.SnackbarLayout || dependency instanceof RecyclerView;
     }

@@ -20,7 +20,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 import com.example.radek.nfc_test.R;
-import misc.SharedPrefsManager;
+import misc.PersistentDataStorage;
 import model.Alarm;
 
 public class AlarmAlertActivity extends AppCompatActivity {
@@ -31,13 +31,13 @@ public class AlarmAlertActivity extends AppCompatActivity {
     private IntentFilter[] intentFiltersArray;
     private String[][] techListsArray;
     private NfcAdapter mAdapter;
-    private SharedPrefsManager spManager;
+    private PersistentDataStorage spManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alarm_alert);
-        spManager = new SharedPrefsManager(getApplicationContext());
+        spManager = new PersistentDataStorage(this);
         spManager.resetNfcTagAttached(); //used to then determine if the user really scanned an NFC tag or force closed the app
 
         IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);

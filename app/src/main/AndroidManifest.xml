@@ -21,8 +21,9 @@
         android:supportsRtl="false"
         android:theme="@style/AppTheme">
         <activity
-            android:name="ui.alarms_list.AlarmsActivity"
-            android:theme="@style/SplashActivityTheme">
+            android:name="ui.alarms_list_screen.AlarmsActivity"
+            android:theme="@style/SplashActivityTheme"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,9 +44,6 @@
                 android:name="android.nfc.action.TECH_DISCOVERED"
                 android:resource="@xml/nfc_tech_filter" />
         </activity>
-        <activity
-            android:name="ui.AlarmDetailsActivity"
-            android:parentActivityName="ui.alarms_list.AlarmsActivity" />
 
         <activity
             android:name="ui.AlarmAlertActivity"
