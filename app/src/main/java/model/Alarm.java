@@ -7,22 +7,21 @@ import android.content.Intent;
 import android.media.RingtoneManager;
 import android.os.Parcel;
 import android.os.Parcelable;
-
-import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
 import background.AlarmAlertBroadcastReceiver;
-import misc.IllegalHourException;
+import com.bignerdranch.expandablerecyclerview.model.Parent;
 import com.google.gson.annotations.Expose;
-
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import misc.IllegalHourException;
 
 /**
  * Created by Radek on 2016-05-27.
  */
-public class Alarm implements Parcelable, ParentListItem {
+public class Alarm implements Parcelable, Parent<String> {
     @Expose
     private String stringNotation;
     @Expose
@@ -36,7 +35,7 @@ public class Alarm implements Parcelable, ParentListItem {
     @Expose
     private Boolean vibrate = true;
     @Expose
-    private String alarmName = "Alarm Clock ";
+    private String alarmName = "Alarm Clock";
     @Expose
     private int ID;
 
@@ -73,8 +72,8 @@ public class Alarm implements Parcelable, ParentListItem {
     }
 
     @Override
-    public List<?> getChildItemList() {
-        return Arrays.asList(this); //the child and parent use the same resource (alarm) in the expandable recyclerview
+    public List<String> getChildList() {
+        return new ArrayList<>(Arrays.asList(alarmName));
     }
 
     @Override

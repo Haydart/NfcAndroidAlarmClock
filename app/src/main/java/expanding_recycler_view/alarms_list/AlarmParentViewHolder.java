@@ -9,8 +9,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import com.bignerdranch.expandablerecyclerview.Model.ParentListItem;
-import com.bignerdranch.expandablerecyclerview.ViewHolder.ParentViewHolder;
+import com.bignerdranch.expandablerecyclerview.ParentViewHolder;
+import com.bignerdranch.expandablerecyclerview.model.Parent;
 import com.example.radek.nfc_test.R;
 import model.Alarm;
 
@@ -37,7 +37,7 @@ public class AlarmParentViewHolder extends ParentViewHolder {
         this.listener = listener;
     }
 
-    public void bindView(final ParentListItem listRowDataModel) {
+    public void bindView(final Parent listRowDataModel) {
         final Alarm alarm = (Alarm) listRowDataModel;
         alarmHourTextView.setText(alarm.getStringNotation());
         alarmDayTextView.setText(alarm.getAlarmName());

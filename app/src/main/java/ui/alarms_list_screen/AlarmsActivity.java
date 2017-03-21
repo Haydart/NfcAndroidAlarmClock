@@ -17,11 +17,10 @@ import android.widget.Toast;
 import background.AlarmServiceBroadcastReceiver;
 import butterknife.BindView;
 import butterknife.OnClick;
-import com.bignerdranch.expandablerecyclerview.Adapter.ExpandableRecyclerAdapter;
+import com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter;
 import com.example.radek.nfc_test.R;
 import expanding_recycler_view.alarms_list.AlarmRecyclerViewAdapter;
 import expanding_recycler_view.alarms_list.AlarmsListRowListener;
-import java.util.List;
 import misc.PersistentDataStorage;
 import model.Alarm;
 import ui.base.BaseActivity;
@@ -34,7 +33,6 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
     private NfcAdapter nfcAdapter;
     private AlarmRecyclerViewAdapter alarmsAdapter;
     private PersistentDataStorage sharedPrefsManager;
-    private List<Alarm> alarmsList;
 
     @OnClick(R.id.fab)
     public void onFabClicked() {
@@ -45,7 +43,7 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        callAlarmScheduleService();
+        //callAlarmScheduleService();
         sharedPrefsManager = new PersistentDataStorage(this);
         initializeRecyclerView();
     }
@@ -54,14 +52,28 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
     protected void onStart() {
         super.onStart();
         checkForNfcService();
-        alarmsList = sharedPrefsManager.loadAlarmsList();
-        callAlarmScheduleService();
+        alarmsAdapter.updateAlarmsList(sharedPrefsManager.loadAlarmsList());
+        //callAlarmScheduleService();
+        Log.d(getClass().getSimpleName(), "on start");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(getClass().getSimpleName(), "on resume");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(getClass().getSimpleName(), "on pause");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        sharedPrefsManager.saveAlarmsList(alarmsList);
+        sharedPrefsManager.saveAlarmsList(alarmsAdapter.getAlarmsList());
+        Log.d(getClass().getSimpleName(), "on stop");
     }
 
     @Override
@@ -78,13 +90,13 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
         alarmsAdapter = new AlarmRecyclerViewAdapter(sharedPrefsManager.loadAlarmsList(), this);
         alarmsAdapter.setExpandCollapseListener(new ExpandableRecyclerAdapter.ExpandCollapseListener() {
             @Override
-            public void onListItemExpanded(int position) {
+            public void onParentExpanded(int parentPosition) {
                 alarmsAdapter.collapseAllParents();
-                alarmsAdapter.expandParent(position);
+                alarmsAdapter.expandParent(parentPosition);
             }
 
             @Override
-            public void onListItemCollapsed(int position) {
+            public void onParentCollapsed(int parentPosition) {
                 //no-op
             }
         });
@@ -139,43 +151,13 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
     protected void onNewIntent(Intent intent) {
         sharedPrefsManager.notifyNfcTagAttached();
         super.onNewIntent(intent);
-        // TODO: 16/03/2017 recognize NDEF formatted contents data
         finish();
-    }
-
-    private void refreshAlarmsList() {
-        sharedPrefsManager.saveAlarmsList(alarmsList);
-        alarmsList = sharedPrefsManager.loadAlarmsList();
+        // TODO: 16/03/2017 recognize NDEF formatted contents data
     }
 
     protected void callAlarmScheduleService() {
         Intent nfcAlarmServiceIntent = new Intent(this, AlarmServiceBroadcastReceiver.class);
         sendBroadcast(nfcAlarmServiceIntent, null);
-    }
-
-    public void updateAlarm(int position, boolean newState) {
-        alarmsList.get(position).setAlarmActive(newState);
-
-        if (newState) {
-            displayAlarmTimeSnackbar(position);
-        }
-
-        refreshAlarmsList();
-        callAlarmScheduleService();
-        printActiveAlarmsList();
-    }
-
-    public void displayAlarmTimeSnackbar(int alarmPosition) {
-        Snackbar.make(coordinatorLayout, alarmsList.get(alarmPosition).getTimeUntilNextAlarmMessage(), Snackbar.LENGTH_LONG).show();
-    }
-
-    public void printActiveAlarmsList() {
-        for (int i = 0; i < alarmsList.size(); i++) {
-            if (alarmsList.get(i).isAlarmActive()) {
-                Log.d("ACTIVE ALARM PRINTOUT", alarmsList.get(i).getTimeUntilNextAlarmMessage() + " on " + alarmsList.get(i).getStringNotation());
-                //Log.d("ALARM ACTIVE?", "ALARM " + i + " is " + alarmsList.get(i).isAlarmActive());
-            }
-        }
     }
 
     @Override
@@ -198,26 +180,37 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
     }
 
     @Override
-    public void removeAlarmListElement(int position) {
-        alarmsAdapter.remove(position);
-        alarmsAdapter.updateAlarmsList(alarmsList);
-        sharedPrefsManager.saveAlarmsList(alarmsList);
-        callAlarmScheduleService();
-    }
-
-    @Override
-    public void addAlarmListElement(Alarm alarm) {
-        alarmsAdapter.addAlarm(alarm);
+    public void onAlarmCreated(Alarm alarm) {
+        presenter.onAlarmCreated(alarm);
     }
 
     @Override
     public void onAlarmModified(Alarm alarm, int position) {
-        alarmsAdapter.modifyAlarm(alarm, position);
+        presenter.onAlarmModified(alarm, position);
     }
 
     @Override
-    public void onAlarmCreated(Alarm alarm) {
-        presenter.onAlarmCreated(alarm);
+    public void removeAlarmListElement(int position) {
+        alarmsRecyclerView.getRecycledViewPool().clear();
+        alarmsAdapter.remove(position);
+        sharedPrefsManager.saveAlarmsList(alarmsAdapter.getAlarmsList());
+        //callAlarmScheduleService();
+    }
+
+    @Override
+    public void addAlarmListElement(Alarm alarm) {
+        alarmsRecyclerView.getRecycledViewPool().clear();
+        alarmsAdapter.addAlarm(alarm);
+        sharedPrefsManager.saveAlarmsList(alarmsAdapter.getAlarmsList());
+        //callAlarmScheduleService();
+    }
+
+    @Override
+    public void modifyAlarmListElement(Alarm alarm, int position) {
+        alarmsRecyclerView.getRecycledViewPool().clear();
+        alarmsAdapter.modifyAlarm(alarm, position);
+        sharedPrefsManager.saveAlarmsList(alarmsAdapter.getAlarmsList());
+        //callAlarmScheduleService();
     }
 
     @Override

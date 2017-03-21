@@ -15,4 +15,6 @@ interface AlarmsView extends BaseView {
     void removeAlarmListElement(int position);
 
     void addAlarmListElement(Alarm alarm);
+
+    void modifyAlarmListElement(Alarm alarm, int position);
 }

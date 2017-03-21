@@ -51,4 +51,8 @@ class AlarmsPresenter extends BasePresenter<AlarmsView> {
     public void onAlarmCreated(Alarm alarm) {
         view.addAlarmListElement(alarm);
     }
+
+    public void onAlarmModified(Alarm alarm, int position) {
+        view.modifyAlarmListElement(alarm, position);
+    }
 }

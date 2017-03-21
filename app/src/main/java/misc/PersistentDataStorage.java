@@ -25,7 +25,7 @@ public class PersistentDataStorage {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        editor.apply();
+        editor.commit();
     }
 
     public synchronized List<Alarm> loadAlarmsList() {
@@ -36,7 +36,6 @@ public class PersistentDataStorage {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return alarmsList;
     }
 
@@ -45,10 +44,10 @@ public class PersistentDataStorage {
     }
 
     public void notifyNfcTagAttached() {
-        sharedPreferences.edit().putBoolean(Constants.NFC_TAG_ATTACHED, true).apply();
+        sharedPreferences.edit().putBoolean(Constants.NFC_TAG_ATTACHED, true).commit();
     }
 
     public void resetNfcTagAttached() {
-        sharedPreferences.edit().putBoolean(Constants.NFC_TAG_ATTACHED, false).apply();
+        sharedPreferences.edit().putBoolean(Constants.NFC_TAG_ATTACHED, false).commit();
     }
 }
