@@ -21,8 +21,10 @@ import com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter;
 import com.example.radek.nfc_test.R;
 import expanding_recycler_view.alarms_list.AlarmRecyclerViewAdapter;
 import expanding_recycler_view.alarms_list.AlarmsListRowListener;
+import misc.Constants;
 import misc.PersistentDataStorage;
 import model.Alarm;
+import ui.AlarmAlertActivity;
 import ui.base.BaseActivity;
 import ui.widget.dialog_fragment.AnalogTimePickerDialogFragment;
 
@@ -39,11 +41,18 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
         presenter.onActionButtonClicked();
     }
 
+    @OnClick(R.id.debug_button)
+    public void onDebugButtonClicked() {
+        Intent alarmIntent = new Intent(this, AlarmAlertActivity.class);
+        alarmIntent.putExtra("alarm", new Alarm());
+        startActivity(alarmIntent);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
-        //callAlarmScheduleService();
+        callAlarmScheduleService();
         sharedPrefsManager = new PersistentDataStorage(this);
         initializeRecyclerView();
     }
@@ -53,7 +62,7 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
         super.onStart();
         checkForNfcService();
         alarmsAdapter.updateAlarmsList(sharedPrefsManager.loadAlarmsList());
-        //callAlarmScheduleService();
+        callAlarmScheduleService();
         Log.d(getClass().getSimpleName(), "on start");
     }
 
@@ -151,7 +160,11 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
     protected void onNewIntent(Intent intent) {
         sharedPrefsManager.notifyNfcTagAttached();
         super.onNewIntent(intent);
+        Toast.makeText(this, "Attached nfc tag", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this, AlarmsActivity.class));
         finish();
+        System.exit(0);
+        finishAffinity();
         // TODO: 16/03/2017 recognize NDEF formatted contents data
     }
 
@@ -168,8 +181,8 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
     @Override
     public void displayAlarmModificationDialog(Alarm alarm, int position) {
         Bundle arguments = new Bundle();
-        arguments.putParcelable("alarm", alarm);
-        arguments.putInt("position", position);
+        arguments.putParcelable(Constants.ALARM_EXTRA, alarm);
+        arguments.putInt(Constants.ALARM_POSITION_EXTRA, position);
         displayAlarmDialog(arguments);
     }
 
@@ -194,7 +207,7 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
         alarmsRecyclerView.getRecycledViewPool().clear();
         alarmsAdapter.remove(position);
         sharedPrefsManager.saveAlarmsList(alarmsAdapter.getAlarmsList());
-        //callAlarmScheduleService();
+        callAlarmScheduleService();
     }
 
     @Override
@@ -202,7 +215,7 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
         alarmsRecyclerView.getRecycledViewPool().clear();
         alarmsAdapter.addAlarm(alarm);
         sharedPrefsManager.saveAlarmsList(alarmsAdapter.getAlarmsList());
-        //callAlarmScheduleService();
+        callAlarmScheduleService();
     }
 
     @Override
@@ -210,7 +223,7 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
         alarmsRecyclerView.getRecycledViewPool().clear();
         alarmsAdapter.modifyAlarm(alarm, position);
         sharedPrefsManager.saveAlarmsList(alarmsAdapter.getAlarmsList());
-        //callAlarmScheduleService();
+        callAlarmScheduleService();
     }
 
     @Override

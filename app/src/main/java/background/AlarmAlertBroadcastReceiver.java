@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import misc.Constants;
 import model.Alarm;
 import ui.AlarmAlertActivity;
 
@@ -17,12 +18,13 @@ public class AlarmAlertBroadcastReceiver extends BroadcastReceiver {
 
         StaticWakeLock.lockOn(context);
         Bundle bundle = intent.getExtras();
-        final Alarm alarm = (Alarm) bundle.getSerializable("alarm");
+        final Alarm alarm = bundle.getParcelable(Constants.ALARM_EXTRA);
 
-        Intent nfcAlarmAlertActivityIntent;
-        nfcAlarmAlertActivityIntent = new Intent(context, AlarmAlertActivity.class);
-        nfcAlarmAlertActivityIntent.putExtra("alarm", alarm);
-        nfcAlarmAlertActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.startActivity(nfcAlarmAlertActivityIntent);
+        Intent alertActivityIntent;
+        alertActivityIntent = new Intent(context, AlarmAlertActivity.class);
+        alertActivityIntent.putExtra(Constants.ALARM_EXTRA, alarm);
+        alertActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        alertActivityIntent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        context.startActivity(alertActivityIntent);
     }
 }

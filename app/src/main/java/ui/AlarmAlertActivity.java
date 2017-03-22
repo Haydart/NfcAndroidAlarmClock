@@ -9,7 +9,6 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.nfc.NfcAdapter;
-import android.nfc.tech.NfcF;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +19,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
 import com.example.radek.nfc_test.R;
+import misc.Constants;
 import misc.PersistentDataStorage;
 import model.Alarm;
 
@@ -27,18 +27,15 @@ public class AlarmAlertActivity extends AppCompatActivity {
     private Alarm alarm;
     private MediaPlayer mediaPlayer;
     private Vibrator vibrator;
-    private boolean alarmActive;
-    private IntentFilter[] intentFiltersArray;
-    private String[][] techListsArray;
-    private NfcAdapter mAdapter;
-    private PersistentDataStorage spManager;
+    private NfcAdapter nfcAdapter;
+    private PersistentDataStorage persistentDataStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.alarm_alert);
-        spManager = new PersistentDataStorage(this);
-        spManager.resetNfcTagAttached(); //used to then determine if the user really scanned an NFC tag or force closed the app
+        persistentDataStorage = new PersistentDataStorage(this);
+        persistentDataStorage.resetNfcTagAttached();
 
         IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
         try {
@@ -46,10 +43,8 @@ public class AlarmAlertActivity extends AppCompatActivity {
         } catch (IntentFilter.MalformedMimeTypeException e) {
             throw new RuntimeException("fail", e);
         }
-        intentFiltersArray = new IntentFilter[] { ndef, };
-        techListsArray = new String[][] { new String[] { NfcF.class.getName() } };
 
-        mAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
+        nfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
 
         final Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
@@ -58,21 +53,17 @@ public class AlarmAlertActivity extends AppCompatActivity {
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
                 | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
-        setContentView(R.layout.alarm_alert);
-
         Bundle bundle = this.getIntent().getExtras();
-        alarm = (Alarm) bundle.getSerializable("alarm");
+        alarm = bundle.getParcelable(Constants.ALARM_EXTRA);
 
-        TelephonyManager telephonyManager = (TelephonyManager) this
-                .getSystemService(Context.TELEPHONY_SERVICE);
+        TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 
         PhoneStateListener phoneStateListener = new PhoneStateListener() {
             @Override
             public void onCallStateChanged(int state, String incomingNumber) {
                 switch (state) {
                     case TelephonyManager.CALL_STATE_RINGING:
-                        Log.d(getClass().getSimpleName(), "Incoming call: "
-                                + incomingNumber);
+                        Log.d(getClass().getSimpleName(), "Incoming call: " + incomingNumber);
                         try {
                             mediaPlayer.pause();
                         } catch (IllegalStateException e) {
@@ -91,43 +82,39 @@ public class AlarmAlertActivity extends AppCompatActivity {
                 super.onCallStateChanged(state, incomingNumber);
             }
         };
-
-        telephonyManager.listen(phoneStateListener,
-                PhoneStateListener.LISTEN_CALL_STATE);
-
+        telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
         startAlarm();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        alarmActive = true;
-        setupForegroundDispatch(this, mAdapter);
+        setupForegroundDispatch(this, nfcAdapter);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mAdapter.disableForegroundDispatch(this);
+        nfcAdapter.disableForegroundDispatch(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (!spManager.wasNfcTagAttached()) {
+        if (!persistentDataStorage.wasNfcTagAttached()) {
             Toast.makeText(getApplicationContext(), "You won`t get away with that shit, I`m launching a service.", Toast.LENGTH_SHORT).show();
         }
-        spManager = null;
+        persistentDataStorage = null;
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
-        Toast.makeText(this, "alarm tag attached", Toast.LENGTH_LONG).show();
         super.onNewIntent(intent);
+        Toast.makeText(this, "alarm tag attached", Toast.LENGTH_LONG).show();
         vibrator.cancel();
         mediaPlayer.stop();
         mediaPlayer.release();
-        spManager.notifyNfcTagAttached();
+        persistentDataStorage.notifyNfcTagAttached();
         finish();
     }
 
@@ -136,20 +123,18 @@ public class AlarmAlertActivity extends AppCompatActivity {
             mediaPlayer = new MediaPlayer();
             if (alarm.getVibrate()) {
                 vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
-                long[] pattern = { 1000, 200, 200, 200 };
+                long[] pattern = { 0, 100, 300, 100, 300, 100, 100, 100, 100, 100, 300, 100, 100, 100, 100, 100, 100, 100, 300, 100, 100, 100, 500 };
                 vibrator.vibrate(pattern, 0);
             }
             try {
-                mediaPlayer.setVolume(.05f, .05f);
-                mediaPlayer.setDataSource(this,
-                        Uri.parse(alarm.getAlarmTonePath()));
+                mediaPlayer.setVolume(1f, 1f);
+                mediaPlayer.setDataSource(this, Uri.parse(alarm.getAlarmTonePath()));
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_ALARM);
                 mediaPlayer.setLooping(true);
                 mediaPlayer.prepare();
                 mediaPlayer.start();
             } catch (Exception e) {
                 mediaPlayer.release();
-                alarmActive = false;
             }
         }
     }

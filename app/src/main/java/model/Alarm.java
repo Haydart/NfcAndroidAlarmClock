@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import misc.Constants;
 import misc.IllegalHourException;
 
 /**
@@ -124,6 +125,7 @@ public class Alarm implements Parcelable, Parent<String> {
         setStringNotation(hour, minutes);
         alarmTime.set(Calendar.HOUR_OF_DAY, hour);
         alarmTime.set(Calendar.MINUTE, minutes);
+        alarmTime.set(Calendar.SECOND, 0);
     }
 
     public String getStringNotation() {
@@ -301,10 +303,8 @@ public class Alarm implements Parcelable, Parent<String> {
     }
 
     public void schedule(Context context) {
-        setAlarmActive(true);
-
         Intent myIntent = new Intent(context, AlarmAlertBroadcastReceiver.class);
-        myIntent.putExtra("alarm", this);
+        myIntent.putExtra(Constants.ALARM_EXTRA, this);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, myIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, getAlarmTime().getTimeInMillis(), pendingIntent);

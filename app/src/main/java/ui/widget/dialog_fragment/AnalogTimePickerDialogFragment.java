@@ -9,6 +9,7 @@ import android.support.v4.app.DialogFragment;
 import android.text.format.DateFormat;
 import android.widget.TimePicker;
 import java.util.Calendar;
+import misc.Constants;
 import model.Alarm;
 import ui.alarms_list_screen.AlarmDialogListener;
 
@@ -36,8 +37,8 @@ public class AnalogTimePickerDialogFragment extends DialogFragment implements An
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle arguments = getArguments();
         if (arguments != null) {
-            alarm = arguments.getParcelable("alarm");
-            alarmListPosition = arguments.getInt("position");
+            alarm = arguments.getParcelable(Constants.ALARM_EXTRA);
+            alarmListPosition = arguments.getInt(Constants.ALARM_POSITION_EXTRA);
             launchReason = LaunchReason.ALARM_MODIFICATION;
         } else {
             launchReason = LaunchReason.ALARM_CREATION;
