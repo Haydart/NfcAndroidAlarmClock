@@ -1,6 +1,8 @@
 package ui.alarms_list_screen;
 
+import android.app.ActivityManager;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,7 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
-import background.AlarmServiceBroadcastReceiver;
+import background.AlarmSchedulerService;
 import butterknife.BindView;
 import butterknife.OnClick;
 import com.bignerdranch.expandablerecyclerview.ExpandableRecyclerAdapter;
@@ -83,6 +85,16 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
         super.onStop();
         sharedPrefsManager.saveAlarmsList(alarmsAdapter.getAlarmsList());
         Log.d(getClass().getSimpleName(), "on stop");
+    }
+
+    private boolean isAlarmServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -160,17 +172,12 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
     protected void onNewIntent(Intent intent) {
         sharedPrefsManager.notifyNfcTagAttached();
         super.onNewIntent(intent);
-        Toast.makeText(this, "Attached nfc tag", Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(this, AlarmsActivity.class));
         finish();
-        System.exit(0);
-        finishAffinity();
         // TODO: 16/03/2017 recognize NDEF formatted contents data
     }
 
     protected void callAlarmScheduleService() {
-        Intent nfcAlarmServiceIntent = new Intent(this, AlarmServiceBroadcastReceiver.class);
-        sendBroadcast(nfcAlarmServiceIntent, null);
+        startService(new Intent(this, AlarmSchedulerService.class));
     }
 
     @Override

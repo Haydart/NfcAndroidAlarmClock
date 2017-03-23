@@ -17,27 +17,28 @@ import model.Alarm;
 /**
  * Created by Radek on 2016-08-13.
  */
-public class AlarmParentViewHolder extends ParentViewHolder {
+class AlarmParentViewHolder extends ParentViewHolder {
 
     private static final float INITIAL_POSITION = 0.0f;
     private static final float ROTATED_POSITION = 180f;
-
-    private View itemView;
-    private AlarmsListRowListener listener;
+    private static final int ROTATION_ANIMATION_DURATION = 300;
 
     @BindView(R.id.alarmHourTextView) TextView alarmHourTextView;
     @BindView(R.id.alarmDayTextView) TextView alarmDayTextView;
     @BindView(R.id.alarmStateCheckBox) CheckBox alarmCheckBox;
     @BindView(R.id.arrowExpandImageView) ImageView arrowExpandImageView;
 
-    public AlarmParentViewHolder(View itemView, AlarmsListRowListener listener) {
+    private View itemView;
+    private AlarmsListRowListener listener;
+
+    AlarmParentViewHolder(View itemView, AlarmsListRowListener listener) {
         super(itemView);
         ButterKnife.bind(this, itemView);
         this.itemView = itemView;
         this.listener = listener;
     }
 
-    public void bindView(final Parent listRowDataModel) {
+    void bindView(final Parent listRowDataModel) {
         final Alarm alarm = (Alarm) listRowDataModel;
         alarmHourTextView.setText(alarm.getStringNotation());
         alarmDayTextView.setText(alarm.getAlarmName());
@@ -98,7 +99,7 @@ public class AlarmParentViewHolder extends ParentViewHolder {
             );
         }
 
-        rotateAnimation.setDuration(300);
+        rotateAnimation.setDuration(ROTATION_ANIMATION_DURATION);
         rotateAnimation.setFillAfter(true);
         arrowExpandImageView.startAnimation(rotateAnimation);
     }

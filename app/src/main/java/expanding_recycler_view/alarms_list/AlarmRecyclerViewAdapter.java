@@ -2,7 +2,6 @@ package expanding_recycler_view.alarms_list;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.UiThread;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +31,6 @@ public class AlarmRecyclerViewAdapter extends ExpandableRecyclerAdapter<Alarm, S
         View parentItemView = LayoutInflater
                 .from(parentViewGroup.getContext())
                 .inflate(R.layout.alarm_list_parent_layout, parentViewGroup, false);
-        Log.d(getClass().getSimpleName(), "ite count: " + getItemCount());
         return new AlarmParentViewHolder(parentItemView, parentInteractionListener);
     }
 
@@ -43,21 +41,18 @@ public class AlarmRecyclerViewAdapter extends ExpandableRecyclerAdapter<Alarm, S
         View childItemView = LayoutInflater
                 .from(childViewGroup.getContext())
                 .inflate(R.layout.alarm_list_child_layout, childViewGroup, false);
-        Log.d(getClass().getSimpleName(), "ite count: " + getItemCount());
         return new AlarmChildViewHolder(childItemView);
     }
 
     @UiThread
     @Override
     public void onBindParentViewHolder(@NonNull AlarmParentViewHolder parentViewHolder, int parentPosition, @NonNull Alarm dataItem) {
-        Log.d(getClass().getSimpleName(), "ite count: " + getItemCount());
         parentViewHolder.bindView(dataItem);
     }
 
     @UiThread
     @Override
     public void onBindChildViewHolder(@NonNull AlarmChildViewHolder childViewHolder, int parentPosition, int childPosition, @NonNull String childDataItem) {
-        Log.d(getClass().getSimpleName(), "ite count: " + getItemCount());
         childViewHolder.bindView(childDataItem);
     }
 

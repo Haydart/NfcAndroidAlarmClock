@@ -9,11 +9,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-public class AlarmServiceBroadcastReceiver extends BroadcastReceiver {
+public class DeviceBootBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.i("alert service", "alarmServiceBroadcastReceiver");
-        Intent serviceIntent = new Intent(context, AlarmService.class);
+        Log.i("alert service", "Starting alarm schedule service after device boot");
+        Intent serviceIntent = new Intent(context, AlarmSchedulerService.class);
         context.startService(serviceIntent);
     }
 }

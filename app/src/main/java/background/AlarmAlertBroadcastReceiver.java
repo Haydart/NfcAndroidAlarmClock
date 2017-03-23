@@ -13,7 +13,7 @@ public class AlarmAlertBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.i("alert brd reveiver", "alarmAlertBroadcastReceiver");
-        Intent nfcAlarmServiceIntent = new Intent(context, AlarmServiceBroadcastReceiver.class);
+        Intent nfcAlarmServiceIntent = new Intent(context, DeviceBootBroadcastReceiver.class);
         context.sendBroadcast(nfcAlarmServiceIntent, null);
 
         StaticWakeLock.lockOn(context);

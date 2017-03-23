@@ -1,6 +1,9 @@
 package background;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
@@ -8,12 +11,13 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import misc.Constants;
 import misc.PersistentDataStorage;
 import model.Alarm;
 
-public class AlarmService extends Service {
+public class AlarmSchedulerService extends Service {
 
-    PersistentDataStorage spManager;
+    PersistentDataStorage persistentDataStorage;
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -22,9 +26,8 @@ public class AlarmService extends Service {
 
     @Override
     public void onCreate() {
-        Log.d(this.getClass().getSimpleName(), "AlarmService.class onCreate()");
         super.onCreate();
-        spManager = new PersistentDataStorage(this);
+        persistentDataStorage = new PersistentDataStorage(this);
     }
 
     private Alarm getNext() {
@@ -42,7 +45,7 @@ public class AlarmService extends Service {
             }
         });
 
-        List<Alarm> alarmsList = spManager.loadAlarmsList();
+        List<Alarm> alarmsList = persistentDataStorage.loadAlarmsList();
 
         for (Alarm item : alarmsList) {
             if (item.isAlarmActive()) {
@@ -58,28 +61,26 @@ public class AlarmService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(this.getClass().getSimpleName(), "SERVICE STARTED");
+        Log.i(this.getClass().getSimpleName(), "SERVICE STARTED");
         Alarm alarm = getNext();
         if (alarm != null) {
             alarm.schedule(getApplicationContext());
-            Log.d(this.getClass().getSimpleName(), alarm.getTimeUntilNextAlarmMessage() + " on hour " + alarm.getStringNotation());
+            Log.i(this.getClass().getSimpleName(), alarm.getTimeUntilNextAlarmMessage() + " on hour " + alarm.getStringNotation());
         } else {
-            /*Intent myIntent = new Intent(getApplicationContext(), AlarmAlertBroadcastReceiver.class);
-            myIntent.putExtra("alarm", new Alarm());
-            Log.d(this.getClass().getSimpleName(), "alarm was nullLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
-
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, myIntent,PendingIntent.FLAG_CANCEL_CURRENT);
+            Log.i(this.getClass().getSimpleName(), "No alarms set, cancelling any that might have been scheduled");
+            Intent cancellingIntent = new Intent(getApplicationContext(), AlarmAlertBroadcastReceiver.class);
+            cancellingIntent.putExtra(Constants.ALARM_EXTRA, new Alarm());
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, cancellingIntent, PendingIntent.FLAG_CANCEL_CURRENT);
             AlarmManager alarmManager = (AlarmManager)getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-
-            alarmManager.cancel(pendingIntent);*/
-            Log.d("SERVICE NO ALARMS", "NO ALARMS SET");
+            alarmManager.cancel(pendingIntent);
         }
-        return START_NOT_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
     @Override
     public void onDestroy() {
-        spManager = null;
+        persistentDataStorage = null;
+        Log.i(AlarmSchedulerService.this.getClass().getSimpleName(), "Service onDestroy()");
         super.onDestroy();
     }
 }

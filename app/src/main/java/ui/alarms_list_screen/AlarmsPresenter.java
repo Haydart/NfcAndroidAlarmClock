@@ -1,17 +1,9 @@
 package ui.alarms_list_screen;
 
-import java.util.ArrayList;
-import java.util.List;
 import model.Alarm;
 import ui.base.BasePresenter;
 
 class AlarmsPresenter extends BasePresenter<AlarmsView> {
-
-    private List<Alarm> alarmsList;
-
-    public AlarmsPresenter() {
-        this.alarmsList = new ArrayList<>();
-    }
 
     @Override
     protected void onViewStarted(AlarmsView view) {
@@ -31,7 +23,7 @@ class AlarmsPresenter extends BasePresenter<AlarmsView> {
 
     }
 
-    public void onAlarmListRowLongClick(int position) {
+    void onAlarmListRowLongClick(int position) {
         view.displayAlarmDeletionDialog(position);
     }
 
@@ -40,19 +32,19 @@ class AlarmsPresenter extends BasePresenter<AlarmsView> {
         return NoOpAlarmsView.INSTANCE;
     }
 
-    public void onAlarmHourTextClicked(Alarm alarm, int position) {
+    void onAlarmHourTextClicked(Alarm alarm, int position) {
         view.displayAlarmModificationDialog(alarm, position);
     }
 
-    public void onAlarmDeleted(int position) {
+    void onAlarmDeleted(int position) {
         view.removeAlarmListElement(position);
     }
 
-    public void onAlarmCreated(Alarm alarm) {
+    void onAlarmCreated(Alarm alarm) {
         view.addAlarmListElement(alarm);
     }
 
-    public void onAlarmModified(Alarm alarm, int position) {
+    void onAlarmModified(Alarm alarm, int position) {
         view.modifyAlarmListElement(alarm, position);
     }
 }

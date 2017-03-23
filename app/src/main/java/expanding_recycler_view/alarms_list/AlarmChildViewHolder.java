@@ -10,16 +10,16 @@ import com.example.radek.nfc_test.R;
 /**
  * Created by Radek on 2016-08-13.
  */
-public class AlarmChildViewHolder extends ChildViewHolder {
+class AlarmChildViewHolder extends ChildViewHolder {
 
     @BindView(R.id.placeHolderChildTextView) TextView placeholderTextView;
 
-    public AlarmChildViewHolder(View itemView) {
+    AlarmChildViewHolder(View itemView) {
         super(itemView);
         ButterKnife.bind(this, itemView);
     }
 
-    public void bindView(String dataItem) {
+    void bindView(String dataItem) {
         //placeholderTextView.setText(dataItem);
     }
 }
