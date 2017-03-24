@@ -1,8 +1,6 @@
 package ui.alarms_list_screen;
 
-import android.app.ActivityManager;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -85,16 +83,6 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
         super.onStop();
         sharedPrefsManager.saveAlarmsList(alarmsAdapter.getAlarmsList());
         Log.d(getClass().getSimpleName(), "on stop");
-    }
-
-    private boolean isAlarmServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override

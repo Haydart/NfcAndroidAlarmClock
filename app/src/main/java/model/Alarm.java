@@ -28,7 +28,7 @@ public class Alarm implements Parcelable, Parent<String> {
     @Expose
     private Boolean alarmActive = true;
     @Expose
-    private Calendar alarmTime = Calendar.getInstance();
+    private Calendar alarmTime;
     @Expose
     private Day[] days = { Day.MONDAY, Day.TUESDAY, Day.WEDNESDAY, Day.THURSDAY, Day.FRIDAY, Day.SATURDAY, Day.SUNDAY };
     @Expose
@@ -114,6 +114,8 @@ public class Alarm implements Parcelable, Parent<String> {
     }
 
     public Alarm() {
+        alarmTime = Calendar.getInstance();
+        alarmTime.setTimeInMillis(alarmTime.getTimeInMillis() + 5000);
         setStringNotation(alarmTime.get(Calendar.HOUR_OF_DAY), alarmTime.get(Calendar.MINUTE));
     }
 

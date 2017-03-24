@@ -18,13 +18,13 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+        android:launchMode="singleInstance"
         android:supportsRtl="false"
-        android:theme="@style/AppTheme"
-        android:launchMode="singleInstance">
+        android:theme="@style/AppTheme">
         <activity
             android:name="ui.alarms_list_screen.AlarmsActivity"
-            android:theme="@style/SplashActivityTheme"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashActivityTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,22 +32,26 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
             </intent-filter>
-            <!--<intent-filter>
+            <!--
+            <intent-filter>
                 <action android:name="android.nfc.action.TECH_DISCOVERED" />
             </intent-filter>
 
             <meta-data
                 android:name="android.nfc.action.TECH_DISCOVERED"
-                android:resource="@xml/nfc_tech_filter" />-->
+                android:resource="@xml/nfc_tech_filter" />
+            -->
             <intent-filter>
                 <action android:name="android.nfc.action.TAG_DISCOVERED" />
+
                 <category android:name="android.nfc.category.DEFAULT" />
             </intent-filter>
         </activity>
-
         <activity
             android:name="ui.AlarmAlertActivity"
             android:label="Alarm Clock"
@@ -57,20 +61,26 @@
             android:name="background.AlarmSchedulerService"
             android:icon="@drawable/ic_launcher"
             android:label="@string/app_name" />
+        <service
+            android:name="background.AlertActivityRelaunchService"
+            android:enabled="true"
+            android:exported="false" />
 
         <receiver android:name="background.DeviceBootBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
-
         <receiver android:name="background.AlarmAlertBroadcastReceiver" />
         <receiver android:name="background.PhoneStateChangedBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
             </intent-filter>
         </receiver>
-
+        <receiver
+            android:name="background.ScreenStateBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
     </application>
 
 </manifest>

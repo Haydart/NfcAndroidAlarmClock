@@ -15,9 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Toast;
+import background.AlertActivityRelaunchService;
+import background.ScreenStateBroadcastReceiver;
 import com.example.radek.nfc_test.R;
 import misc.Constants;
 import misc.PersistentDataStorage;
@@ -29,6 +32,7 @@ public class AlarmAlertActivity extends AppCompatActivity {
     private Vibrator vibrator;
     private NfcAdapter nfcAdapter;
     private PersistentDataStorage persistentDataStorage;
+    private ScreenStateBroadcastReceiver screenStateReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,11 @@ public class AlarmAlertActivity extends AppCompatActivity {
         setContentView(R.layout.alarm_alert);
         persistentDataStorage = new PersistentDataStorage(this);
         persistentDataStorage.resetNfcTagAttached();
+
+        IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+        filter.addAction(Intent.ACTION_SCREEN_OFF);
+        screenStateReceiver = new ScreenStateBroadcastReceiver();
+        registerReceiver(screenStateReceiver, filter);
 
         IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
         try {
@@ -83,28 +92,28 @@ public class AlarmAlertActivity extends AppCompatActivity {
             }
         };
         telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
+
         startAlarm();
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         setupForegroundDispatch(this, nfcAdapter);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        nfcAdapter.disableForegroundDispatch(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (!persistentDataStorage.wasNfcTagAttached()) {
-            Toast.makeText(getApplicationContext(), "You won`t get away with that shit, I`m launching a service.", Toast.LENGTH_SHORT).show();
-        }
-        persistentDataStorage = null;
     }
 
     @Override
@@ -116,6 +125,29 @@ public class AlarmAlertActivity extends AppCompatActivity {
         mediaPlayer.release();
         persistentDataStorage.notifyNfcTagAttached();
         finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        //no-op
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        nfcAdapter.disableForegroundDispatch(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        vibrator.cancel();
+        mediaPlayer.release();
+        if (!persistentDataStorage.wasNfcTagAttached()) {
+            Toast.makeText(getApplicationContext(), "You won`t get away with that shit, I`m launching a service.", Toast.LENGTH_SHORT).show();
+            startService(new Intent(this, AlertActivityRelaunchService.class));
+        }
+        unregisterReceiver(screenStateReceiver);
+        super.onDestroy();
     }
 
     private void startAlarm() {
