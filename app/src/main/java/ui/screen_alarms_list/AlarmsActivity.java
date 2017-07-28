@@ -1,4 +1,4 @@
-package ui.alarms_list_screen;
+package ui.screen_alarms_list;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.nfc.NfcAdapter;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
@@ -32,6 +33,7 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
 
     @BindView(R.id.alarm_recycler_view) RecyclerView alarmsRecyclerView;
     @BindView(R.id.coordinatorLayout) CoordinatorLayout coordinatorLayout;
+
     private NfcAdapter nfcAdapter;
     private AlarmRecyclerViewAdapter alarmsAdapter;
     private PersistentDataStorage sharedPrefsManager;
@@ -52,6 +54,7 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+
         callAlarmScheduleService();
         sharedPrefsManager = new PersistentDataStorage(this);
         initializeRecyclerView();
@@ -145,7 +148,7 @@ public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implemen
                         .setAction("SETTINGS", new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                startActivityForResult(new Intent(android.provider.Settings.ACTION_WIRELESS_SETTINGS), 0);
+                                startActivityForResult(new Intent(Settings.ACTION_NFC_SETTINGS), 0);
                             }
                         })
                         .setActionTextColor(Color.YELLOW)

@@ -11,7 +11,7 @@ import android.widget.TimePicker;
 import java.util.Calendar;
 import misc.Constants;
 import model.Alarm;
-import ui.alarms_list_screen.AlarmDialogListener;
+import ui.screen_alarms_list.AlarmDialogListener;
 
 public class AnalogTimePickerDialogFragment extends DialogFragment implements AnalogTimePickerDialogView, TimePickerDialog.OnTimeSetListener {
     private AnalogTimePickerDialogPresenter presenter;

@@ -16,7 +16,7 @@ public class AlarmAlertBroadcastReceiver extends BroadcastReceiver {
         Intent nfcAlarmServiceIntent = new Intent(context, DeviceBootBroadcastReceiver.class);
         context.sendBroadcast(nfcAlarmServiceIntent, null);
 
-        StaticWakeLock.lockOn(context);
+        //StaticWakeLock.lockOn(context);
         Bundle bundle = intent.getExtras();
         final Alarm alarm = bundle.getParcelable(Constants.ALARM_EXTRA);
 

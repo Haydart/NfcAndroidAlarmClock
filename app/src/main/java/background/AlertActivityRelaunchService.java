@@ -22,6 +22,7 @@ public class AlertActivityRelaunchService extends Service {
         Log.i(getClass().getSimpleName(), "Anti cheat service onstartcommand");
         Intent alertActivityIntent = new Intent(this, AlarmAlertActivity.class);
         alertActivityIntent.putExtra(Constants.ALARM_EXTRA, new Alarm());
+        alertActivityIntent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         alertActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(alertActivityIntent);
         stopSelf();

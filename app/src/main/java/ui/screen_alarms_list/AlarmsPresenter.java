@@ -1,4 +1,4 @@
-package ui.alarms_list_screen;
+package ui.screen_alarms_list;
 
 import model.Alarm;
 import ui.base.BasePresenter;
@@ -20,16 +20,11 @@ class AlarmsPresenter extends BasePresenter<AlarmsView> {
     }
 
     void onAlarmCheckboxClicked(int position, boolean checked) {
-
+        // TODO: 28/07/2017
     }
 
     void onAlarmListRowLongClick(int position) {
         view.displayAlarmDeletionDialog(position);
-    }
-
-    @Override
-    public AlarmsView getNoOpView() {
-        return NoOpAlarmsView.INSTANCE;
     }
 
     void onAlarmHourTextClicked(Alarm alarm, int position) {
@@ -46,5 +41,10 @@ class AlarmsPresenter extends BasePresenter<AlarmsView> {
 
     void onAlarmModified(Alarm alarm, int position) {
         view.modifyAlarmListElement(alarm, position);
+    }
+
+    @Override
+    public AlarmsView getNoOpView() {
+        return NoOpAlarmsView.INSTANCE;
     }
 }

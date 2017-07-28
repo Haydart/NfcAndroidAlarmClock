@@ -11,7 +11,7 @@ public class StaticWakeLock {
 
     public static void lockOn(Context context) {
         PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
-        //Object flags;
+        Object flags;
         if (wakeLock == null) {
             wakeLock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "NFC_ALARM");
         }
@@ -19,7 +19,7 @@ public class StaticWakeLock {
     }
 
     public static void lockOff(Context context) {
-        //		PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
+        PowerManager pm = (PowerManager) context.getSystemService(Context.POWER_SERVICE);
         try {
             if (wakeLock != null) {
                 wakeLock.release();

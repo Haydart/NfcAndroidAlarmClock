@@ -1,9 +1,9 @@
 package ui.widget.dialog_fragment;
 
-public class AnalogTimePickerDialogPresenter {
+class AnalogTimePickerDialogPresenter {
     private AnalogTimePickerDialogView view;
 
-    public AnalogTimePickerDialogPresenter(AnalogTimePickerDialogView view) {
+    AnalogTimePickerDialogPresenter(AnalogTimePickerDialogView view) {
         this.view = view;
     }
 }

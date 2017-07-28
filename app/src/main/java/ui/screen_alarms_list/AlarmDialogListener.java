@@ -1,4 +1,4 @@
-package ui.alarms_list_screen;
+package ui.screen_alarms_list;
 
 import model.Alarm;
 

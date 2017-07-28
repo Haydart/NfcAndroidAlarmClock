@@ -1,6 +1,5 @@
 package ui;
 
-import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -8,13 +7,15 @@ import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
 import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.os.Vibrator;
-import android.support.v7.app.AppCompatActivity;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -22,11 +23,14 @@ import android.widget.Toast;
 import background.AlertActivityRelaunchService;
 import background.ScreenStateBroadcastReceiver;
 import com.example.radek.nfc_test.R;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 import misc.Constants;
 import misc.PersistentDataStorage;
 import model.Alarm;
+import ui.base.BaseActivity;
 
-public class AlarmAlertActivity extends AppCompatActivity {
+public class AlarmAlertActivity extends BaseActivity {
     private Alarm alarm;
     private MediaPlayer mediaPlayer;
     private Vibrator vibrator;
@@ -37,54 +41,59 @@ public class AlarmAlertActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.alarm_alert);
+        setWindowFlags();
+        initPersistentDataStorage();
+        registerScreenOffReceiver();
+        initNfcAdapter();
+        getAlarmExtra();
+        setPhoneStateListener();
+        startAlarm();
+    }
+
+    private void setWindowFlags() {
+        final Window window = getWindow();
+        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+    }
+
+    private void initPersistentDataStorage() {
         persistentDataStorage = new PersistentDataStorage(this);
         persistentDataStorage.resetNfcTagAttached();
+    }
 
-        IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
-        filter.addAction(Intent.ACTION_SCREEN_OFF);
+    private void initNfcAdapter() {
+        nfcAdapter = NfcAdapter.getDefaultAdapter(this);
+    }
+
+    private void registerScreenOffReceiver() {
+        IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_OFF);
         screenStateReceiver = new ScreenStateBroadcastReceiver();
         registerReceiver(screenStateReceiver, filter);
+    }
 
-        IntentFilter ndef = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
-        try {
-            ndef.addDataType("*/*");
-        } catch (IntentFilter.MalformedMimeTypeException e) {
-            throw new RuntimeException("fail", e);
-        }
-
-        nfcAdapter = NfcAdapter.getDefaultAdapter(getApplicationContext());
-
-        final Window window = getWindow();
-        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
-        window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD);
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
-
+    private void getAlarmExtra() {
         Bundle bundle = this.getIntent().getExtras();
         alarm = bundle.getParcelable(Constants.ALARM_EXTRA);
+    }
 
+    private void setPhoneStateListener() {
         TelephonyManager telephonyManager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-
         PhoneStateListener phoneStateListener = new PhoneStateListener() {
             @Override
             public void onCallStateChanged(int state, String incomingNumber) {
                 switch (state) {
                     case TelephonyManager.CALL_STATE_RINGING:
-                        Log.d(getClass().getSimpleName(), "Incoming call: " + incomingNumber);
                         try {
                             mediaPlayer.pause();
-                        } catch (IllegalStateException e) {
-
+                        } catch (IllegalStateException ignored) {
                         }
                         break;
                     case TelephonyManager.CALL_STATE_IDLE:
-                        Log.d(getClass().getSimpleName(), "Call State Idle");
                         try {
                             mediaPlayer.start();
-                        } catch (IllegalStateException e) {
-
+                        } catch (IllegalStateException ignored) {
                         }
                         break;
                 }
@@ -92,62 +101,6 @@ public class AlarmAlertActivity extends AppCompatActivity {
             }
         };
         telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
-
-        startAlarm();
-    }
-
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus) {
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        setupForegroundDispatch(this, nfcAdapter);
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        Toast.makeText(this, "alarm tag attached", Toast.LENGTH_LONG).show();
-        vibrator.cancel();
-        mediaPlayer.stop();
-        mediaPlayer.release();
-        persistentDataStorage.notifyNfcTagAttached();
-        finish();
-    }
-
-    @Override
-    public void onBackPressed() {
-        //no-op
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        nfcAdapter.disableForegroundDispatch(this);
-    }
-
-    @Override
-    protected void onDestroy() {
-        vibrator.cancel();
-        mediaPlayer.release();
-        if (!persistentDataStorage.wasNfcTagAttached()) {
-            Toast.makeText(getApplicationContext(), "You won`t get away with that shit, I`m launching a service.", Toast.LENGTH_SHORT).show();
-            startService(new Intent(this, AlertActivityRelaunchService.class));
-        }
-        unregisterReceiver(screenStateReceiver);
-        super.onDestroy();
     }
 
     private void startAlarm() {
@@ -171,10 +124,106 @@ public class AlarmAlertActivity extends AppCompatActivity {
         }
     }
 
-    public static void setupForegroundDispatch(final Activity activity, NfcAdapter adapter) {
-        final Intent intent = new Intent(activity, activity.getClass());
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        enterFullscreenMode(hasFocus);
+    }
+
+    private void enterFullscreenMode(boolean hasFocus) {
+        if (hasFocus) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        setupForegroundDispatch();
+    }
+
+    private void setupForegroundDispatch() {
+        final Intent intent = new Intent(this, getClass());
         intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        final PendingIntent pendingIntent = PendingIntent.getActivity(activity, 0, intent, 0);
-        adapter.enableForegroundDispatch(activity, pendingIntent, null, null);
+        final PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+        nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (NfcAdapter.ACTION_NDEF_DISCOVERED.equals(intent.getAction())) {
+            handleIncomingNdefDataIntent(intent);
+        }
+    }
+
+    private void handleIncomingNdefDataIntent(Intent intent) {
+        if ("text/plain".equals(intent.getType())) {
+            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+            Ndef ndef = Ndef.get(tag);
+            NdefMessage ndefMessage = ndef.getCachedNdefMessage();
+            NdefRecord[] records = ndefMessage.getRecords();
+            for (NdefRecord ndefRecord : records) {
+                if (ndefRecord.getTnf() == NdefRecord.TNF_WELL_KNOWN && Arrays.equals(ndefRecord.getType(), NdefRecord.RTD_TEXT)) {
+                    if (readNfcTagText(ndefRecord).equals("alarm")) {
+                        Toast.makeText(this, "alarm tag attached", Toast.LENGTH_LONG).show();
+                        vibrator.cancel();
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                        persistentDataStorage.notifyNfcTagAttached();
+                        finish();
+                    } else {
+                        Toast.makeText(this, "You are using a wrong tag", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        } else {
+            Toast.makeText(this, "You are using a wrong tag", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private String readNfcTagText(NdefRecord ndefRecord) {
+        byte[] payload = ndefRecord.getPayload();
+        Charset textEncodingCharset = Charset.forName(((payload[0] & 128) == 0) ? "UTF-8" : "UTF-16");
+        int languageCodeLength = payload[0] & 51;
+        return new String(payload, languageCodeLength + 1, payload.length - languageCodeLength - 1, textEncodingCharset);
+    }
+
+    @Override
+    public void onBackPressed() {
+        //no-op
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        nfcAdapter.disableForegroundDispatch(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        vibrator.cancel();
+        mediaPlayer.release();
+        unregisterReceiver(screenStateReceiver);
+        if (!persistentDataStorage.wasNfcTagAttached()) {
+            Toast.makeText(getApplicationContext(), "You won`t get away with that cheating, I`m relaunching myself.", Toast.LENGTH_SHORT).show();
+            startService(new Intent(this, AlertActivityRelaunchService.class));
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    protected void initPresenter() {
+        // TODO: 27/03/2017 implement
+    }
+
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.alarm_alert;
     }
 }

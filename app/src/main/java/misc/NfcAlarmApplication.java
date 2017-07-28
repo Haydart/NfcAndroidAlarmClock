@@ -3,7 +3,7 @@ package misc;
 import android.app.Application;
 import android.content.Context;
 
-class NfcAlarmApplication extends Application {
+public class NfcAlarmApplication extends Application {
     private static Context applicationContext;
 
     @Override
