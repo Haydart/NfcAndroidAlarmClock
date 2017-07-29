@@ -6,7 +6,7 @@ apply plugin: 'com.android.application'
 
 android {
 	compileSdkVersion 25
-	buildToolsVersion '25.0.0'
+	buildToolsVersion '25.0.3'
 
 	defaultConfig {
 		applicationId "com.rmakowiecki.nfcalarmclock"
@@ -24,7 +24,7 @@ android {
 }
 
 ext {
-	supportLibVersion = '25.2.0'
+	supportLibVersion = '25.3.1'
 }
 
 dependencies {
@@ -35,17 +35,27 @@ dependencies {
 	compile "com.android.support:gridlayout-v7:${supportLibVersion}"
 	compile "com.android.support:palette-v7:${supportLibVersion}"
 	compile "com.android.support:recyclerview-v7:${supportLibVersion}"
+	compile 'com.android.support.constraint:constraint-layout:1.0.2'
 
+	//Expandable recycler view
 	compile 'com.bignerdranch.android:expandablerecyclerview:3.0.0-RC1'
+
+	//RxJava
 	compile 'com.jakewharton.rxbinding:rxbinding:1.0.1'
 	compile 'io.reactivex:rxandroid:1.2.1'
 	compile 'io.reactivex:rxjava:1.2.1'
 	compile 'com.artemzin.rxjava:proguard-rules:1.2.1.0'
+
+	//Gson
 	compile 'com.google.code.gson:gson:2.7'
+
+	//Butterknife
 	compile 'com.jakewharton:butterknife:8.5.1'
-	compile 'com.android.support.constraint:constraint-layout:1.0.2'
+
+	//No-Op
+	provided 'com.jenzz.noop:annotation:1.2.0'
+
 	testCompile 'junit:junit:4.12'
 	annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
 	annotationProcessor 'com.jenzz.noop:processor:1.2.0'
-	provided 'com.jenzz.noop:annotation:1.2.0'
 }

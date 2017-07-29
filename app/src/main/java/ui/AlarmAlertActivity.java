@@ -22,7 +22,6 @@ import android.view.WindowManager;
 import android.widget.Toast;
 import background.AlertActivityRelaunchService;
 import background.ScreenStateBroadcastReceiver;
-import com.example.radek.nfc_test.R;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import misc.Constants;
