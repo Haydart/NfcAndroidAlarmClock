@@ -22,6 +22,7 @@ import android.view.WindowManager;
 import android.widget.Toast;
 import background.AlertActivityRelaunchService;
 import background.ScreenStateBroadcastReceiver;
+import com.example.radek.nfc_test.R;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import misc.Constants;
@@ -218,7 +219,7 @@ public class AlarmAlertActivity extends BaseActivity {
 
     @Override
     protected void initPresenter() {
-        // TODO: 27/03/2017 implement
+        // TODO: 29/07/2017  
     }
 
     @Override

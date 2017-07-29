@@ -9,20 +9,19 @@ import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.NdefFormatable;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 import com.example.radek.nfc_test.R;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import ui.base.BaseActivity;
 
-public class TagWritingActivity extends AppCompatActivity {
+public class TagWritingActivity extends BaseActivity<TagWritingPresenter> implements TagWritingView {
 
     private NfcAdapter nfcAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_tag_writing);
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
     }
 
@@ -128,13 +127,24 @@ public class TagWritingActivity extends AppCompatActivity {
         System.arraycopy(textBytes, 0, payload, 1 + langBytes.length, textBytes.length);
         NdefRecord rtdTextRecord = new NdefRecord(NdefRecord.TNF_WELL_KNOWN, NdefRecord.RTD_TEXT, new byte[0], payload);
 
-        if (addAndroidApplicationRecord) { // add a record to launch an application on tag discovery
+        if (addAndroidApplicationRecord) {
+            // add a record to launch an application on tag discovery
             return new NdefMessage(
                     new NdefRecord[] { rtdTextRecord, NdefRecord.createApplicationRecord("com.rmakowiecki.nfcalarmclock") }
             );
         } else {
             return new NdefMessage(new NdefRecord[] { rtdTextRecord });
         }
+    }
+
+    @Override
+    protected void initPresenter() {
+        presenter = new TagWritingPresenter();
+    }
+
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.activity_tag_writing;
     }
 
     private final class WriteResponse {

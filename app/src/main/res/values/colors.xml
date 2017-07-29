@@ -8,8 +8,7 @@
     <color name="secondary_text">#727272</color>
     <color name="icons">#FFFFFF</color>
     <color name="divider">#B6B6B6</color>
-
-    <!-- Splash screen -->
+    <color name="cardview_dark_background">#202020</color>
 
     <!-- Main screen -->
     <color name="main_activity_header_alpha">#b10097A7</color>
