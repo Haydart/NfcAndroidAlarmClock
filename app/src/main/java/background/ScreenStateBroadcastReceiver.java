@@ -4,8 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import ui.AlarmAlertActivity;
 import ui.base.BaseActivity;
+import ui.screen_alarm_alert.AlarmAlertActivity;
 
 public class ScreenStateBroadcastReceiver extends BroadcastReceiver {
 

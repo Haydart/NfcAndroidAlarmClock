@@ -1,4 +1,4 @@
-package ui;
+package ui.screen_alarm_alert;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -30,7 +30,7 @@ import misc.PersistentDataStorage;
 import model.Alarm;
 import ui.base.BaseActivity;
 
-public class AlarmAlertActivity extends BaseActivity {
+public final class AlarmAlertActivity extends BaseActivity<AlarmAlertPresenter> implements AlarmAlertView {
     private Alarm alarm;
     private MediaPlayer mediaPlayer;
     private Vibrator vibrator;
@@ -219,7 +219,7 @@ public class AlarmAlertActivity extends BaseActivity {
 
     @Override
     protected void initPresenter() {
-        // TODO: 29/07/2017  
+        presenter = new AlarmAlertPresenter();
     }
 
     @Override

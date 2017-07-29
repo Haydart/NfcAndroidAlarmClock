@@ -25,8 +25,8 @@ import expanding_recycler_view.alarms_list.AlarmsListRowListener;
 import misc.Constants;
 import misc.PersistentDataStorage;
 import model.Alarm;
-import ui.AlarmAlertActivity;
 import ui.base.BaseActivity;
+import ui.screen_alarm_alert.AlarmAlertActivity;
 import ui.widget.dialog_fragment.AnalogTimePickerDialogFragment;
 
 public final class AlarmsActivity extends BaseActivity<AlarmsPresenter> implements AlarmsView, AlarmsListRowListener, AlarmDialogListener {

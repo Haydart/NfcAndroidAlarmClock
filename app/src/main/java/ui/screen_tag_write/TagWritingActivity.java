@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import ui.base.BaseActivity;
 
-public class TagWritingActivity extends BaseActivity<TagWritingPresenter> implements TagWritingView {
+public final class TagWritingActivity extends BaseActivity<TagWritingPresenter> implements TagWritingView {
 
     private NfcAdapter nfcAdapter;
 

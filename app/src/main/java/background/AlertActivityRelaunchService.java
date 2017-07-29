@@ -7,7 +7,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import misc.Constants;
 import model.Alarm;
-import ui.AlarmAlertActivity;
+import ui.screen_alarm_alert.AlarmAlertActivity;
 
 public class AlertActivityRelaunchService extends Service {
 

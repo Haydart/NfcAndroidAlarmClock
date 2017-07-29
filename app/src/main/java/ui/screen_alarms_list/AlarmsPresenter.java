@@ -3,7 +3,7 @@ package ui.screen_alarms_list;
 import model.Alarm;
 import ui.base.BasePresenter;
 
-class AlarmsPresenter extends BasePresenter<AlarmsView> {
+final class AlarmsPresenter extends BasePresenter<AlarmsView> {
 
     @Override
     protected void onViewStarted(AlarmsView view) {

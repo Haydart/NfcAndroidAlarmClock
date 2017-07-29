@@ -29,6 +29,12 @@
             android:theme="@style/SplashActivityTheme">
 
             <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <intent-filter>
                 <action android:name="android.nfc.action.NDEF_DISCOVERED" />
 
                 <category android:name="android.intent.category.DEFAULT" />
@@ -42,7 +48,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="ui.AlarmAlertActivity"
+            android:name="ui.screen_alarm_alert.AlarmAlertActivity"
             android:label="Alarm Clock"
             android:screenOrientation="portrait" />
 
@@ -72,11 +78,6 @@
             android:exported="true" />
 
         <activity android:name="ui.screen_tag_write.TagWritingActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
             <intent-filter>
                 <action android:name="android.nfc.action.TAG_DISCOVERED" />
 
