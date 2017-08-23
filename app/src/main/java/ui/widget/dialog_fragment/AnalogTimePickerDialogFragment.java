@@ -13,8 +13,7 @@ import misc.Constants;
 import model.Alarm;
 import ui.screen_alarms_list.AlarmDialogListener;
 
-public class AnalogTimePickerDialogFragment extends DialogFragment implements AnalogTimePickerDialogView, TimePickerDialog.OnTimeSetListener {
-    private AnalogTimePickerDialogPresenter presenter;
+public class AnalogTimePickerDialogFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
     private AlarmDialogListener listener;
     private LaunchReason launchReason;
     private Alarm alarm;
@@ -29,7 +28,6 @@ public class AnalogTimePickerDialogFragment extends DialogFragment implements An
     public void onAttach(Context context) {
         super.onAttach(context);
         this.listener = (AlarmDialogListener) context;
-        initPresenter();
     }
 
     @NonNull
@@ -83,9 +81,5 @@ public class AnalogTimePickerDialogFragment extends DialogFragment implements An
             alarm.setHour(hourOfDay, minute);
             listener.onAlarmModified(alarm, alarmListPosition);
         }
-    }
-
-    private void initPresenter() {
-        presenter = new AnalogTimePickerDialogPresenter(this);
     }
 }
