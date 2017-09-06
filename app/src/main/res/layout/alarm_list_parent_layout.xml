@@ -21,7 +21,8 @@
         android:layout_alignParentStart="true"
         android:layout_below="@id/recyclerViewDivider"
         android:paddingBottom="@dimen/alarmHourBottomPadding"
-        android:paddingLeft="@dimen/default_layout_margin"
+        android:paddingStart="@dimen/default_layout_margin"
+        android:paddingEnd="@dimen/default_layout_margin"
         android:paddingTop="@dimen/default_layout_margin"
         android:text="@string/hour_placeholder"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -58,7 +59,6 @@
         android:layout_height="32dp"
         android:layout_alignBottom="@+id/alarmDayTextView"
         android:layout_alignStart="@+id/alarmStateCheckBox"
-        android:contentDescription="@string/dropdownarrow"
         android:src="@drawable/ic_keyboard_arrow_down_white_24dp"
         android:tint="@color/abc_secondary_text_material_dark" />
 
