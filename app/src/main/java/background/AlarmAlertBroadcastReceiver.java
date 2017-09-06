@@ -16,12 +16,10 @@ public class AlarmAlertBroadcastReceiver extends BroadcastReceiver {
         Intent nfcAlarmServiceIntent = new Intent(context, DeviceBootBroadcastReceiver.class);
         context.sendBroadcast(nfcAlarmServiceIntent, null);
 
-        //StaticWakeLock.lockOn(context);
         Bundle bundle = intent.getExtras();
         final Alarm alarm = bundle.getParcelable(Constants.ALARM_EXTRA);
 
-        Intent alertActivityIntent;
-        alertActivityIntent = new Intent(context, AlarmAlertActivity.class);
+        Intent alertActivityIntent = new Intent(context, AlarmAlertActivity.class);
         alertActivityIntent.putExtra(Constants.ALARM_EXTRA, alarm);
         alertActivityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         alertActivityIntent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
