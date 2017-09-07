@@ -47,7 +47,6 @@ public final class AlarmAlertActivity extends BaseActivity<AlarmAlertPresenter> 
         initNfcAdapter();
         getAlarmExtra();
         setPhoneStateListener();
-        startAlarm();
     }
 
     private void setWindowFlags() {
@@ -103,7 +102,8 @@ public final class AlarmAlertActivity extends BaseActivity<AlarmAlertPresenter> 
         telephonyManager.listen(phoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
     }
 
-    private void startAlarm() {
+    @Override
+    public void startAlarm() {
         if (!alarm.getAlarmTonePath().isEmpty()) {
             mediaPlayer = new MediaPlayer();
             if (alarm.getVibrate()) {

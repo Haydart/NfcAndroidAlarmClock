@@ -5,4 +5,5 @@ import ui.base.BaseView;
 
 @NoOp
 public interface AlarmAlertView extends BaseView {
+    void startAlarm();
 }
